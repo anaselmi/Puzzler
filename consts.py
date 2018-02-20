@@ -1,20 +1,24 @@
-import pygame
-from pygame.locals import *
-# Colors
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
-ORANGE = (255, 165, 0)
-YELLOW = (255, 255, 0)
-GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
-PURPLE = (128, 0, 128)
-PINK = (255, 200, 200)
-BROWN = (139, 69, 19)
-GOLD = (255, 255, 0)
+import tcod
 
-# Default Button Mapping
-BUTTON_MAP = {
-    K_ESCAPE: "QUIT",  # Escape
-    K_UP: "MOVE"
-}
+# Screen Parameters
+SCREEN_X = 40
+SCREEN_Y = 40
+GAME_TITLE = "Puzzler: The Roguelike"
+FONT_PATH = "terminal.png"
+
+# Colors
+WHITE = tcod.Color(255, 255, 255)
+
+# Action Types
+PLAYER_ACTION = [
+    "MOVE UP",
+    "MOVE DOWN",
+    "MOVE LEFT",
+    "MOVE RIGHT"
+]
+GAME_ACTION = [
+    "QUIT"
+]
+
+
+
