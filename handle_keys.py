@@ -3,13 +3,9 @@ import sys
 from consts import *
 
 
-def get_key():
-    key = tcod.console_wait_for_keypress(True)
-    return key
-
-
 def handle_keys():
-    key = get_key()
+    # Function that figures out what key was last pressed, returns string for action to perform
+    key = tcod.console_wait_for_keypress(True)
     if key.vk == tcod.KEY_UP:
         return "MOVE UP"
     if key.vk == tcod.KEY_DOWN:

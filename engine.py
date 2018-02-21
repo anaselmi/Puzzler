@@ -11,13 +11,14 @@ def main():
         tcod.console_put_char(con, player.X, player.Y, player.char, tcod.BKGND_NONE)
         tcod.console_blit(con, 0, 0, SCREEN_X + 1, SCREEN_Y, 0, 0, 0)
         tcod.console_flush()
-        tcod.console_put_char(con, player.X, player.Y, '', tcod.BKGND_NONE)
+        tcod.console_put_char(con, player.X, player.Y, ' ', tcod.BKGND_NONE)
 
         action = handle_keys()
 
         if action in PLAYER_ACTION:
             player.act(action)
         elif action in GAME_ACTION:
+            # TODO: implement a gamestate class of some kind that parses these strings
             pass
 
 
