@@ -6,20 +6,28 @@ from object import *
 
 def main():
 
-    while not tcod.console_is_window_closed():
+    key = tcod.Key()
+    mouse = tcod.Mouse()
+
+    running = True
+    while not tcod.console_is_window_closed() and running:
+
         tcod.console_set_default_foreground(0, tcod.white)
-        tcod.console_put_char(con, player.X, player.Y, player.char, tcod.BKGND_NONE)
+        tcod.console_put_char(con, player.x, player.y, player.char, tcod.BKGND_NONE)
         tcod.console_blit(con, 0, 0, SCREEN_X + 1, SCREEN_Y, 0, 0, 0)
         tcod.console_flush()
-        tcod.console_put_char(con, player.X, player.Y, ' ', tcod.BKGND_NONE)
+        tcod.console_put_char(con, player.x, player.y, 0, tcod.BKGND_NONE)
 
-        action = handle_keys()
+        tcod.sys_wait_for_event(tcod.EVENT_KEY_PRESS, key, mouse, True)
+        action = handle_keys(key)
+        move = action.get("move")
+        exit = action.get("exit")
 
-        if action in PLAYER_ACTION:
-            player.act(action)
-        elif action in GAME_ACTION:
-            # TODO: implement a gamestate class of some kind that parses these strings
-            pass
+        if move:
+            player.move(move)
+        if exit:
+            running = False
+        # TODO: use handle_keys and dictionaries to parse and perform actions
 
 
 if __name__ == "__main__":
@@ -27,8 +35,8 @@ if __name__ == "__main__":
     tcod.console_init_root(SCREEN_X, SCREEN_Y, GAME_TITLE)
     con = tcod.console_new(SCREEN_X, SCREEN_Y)
 
-    player_x, player_y = SCREEN_X // 2, SCREEN_Y // 2
-    player = Object(player_x, player_y, "C")
+    player = Object(CENTER_X, CENTER_Y, T_PLAYER)
 
     main()
+
 
