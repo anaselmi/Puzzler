@@ -7,13 +7,13 @@ def handle_keys(key):
     # key = tcod.console_wait_for_keypress(True).vk
     key = key.vk
     if key == tcod.KEY_UP:
-        return {"move": [0, -1]}
+        return {"move": (0, -1)}
     elif key == tcod.KEY_DOWN:
-        return {"move": [0, 1]}
+        return {"move": (0, 1)}
     elif key == tcod.KEY_LEFT:
-        return {"move": [-1, 0]}
+        return {"move": (-1, 0)}
     elif key == tcod.KEY_RIGHT:
-        return {"move": [1, 0]}
+        return {"move": (1, 0)}
     elif key == tcod.KEY_ESCAPE:
         return {"exit": True}
 
