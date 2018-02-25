@@ -1,7 +1,7 @@
 import tcod
 from consts import *
 from handle_input import *
-from object import *
+from Unit import *
 
 
 def main():
@@ -35,7 +35,7 @@ if __name__ == "__main__":
     tcod.console_init_root(SCREEN_X, SCREEN_Y, GAME_TITLE)
     con = tcod.console_new(SCREEN_X, SCREEN_Y)
 
-    PLAYER = Object(CENTER_X, CENTER_Y, T_PLAYER)
+    PLAYER = Unit(CENTER_X, CENTER_Y, T_PLAYER)
 
     main()
 

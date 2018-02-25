@@ -2,7 +2,7 @@ import tcod
 from consts import *
 
 
-class Object:
+class Unit:
     # Potentially the class from which all game objects inherit from, might just end up being for the PC only
     # TODO: Start adding a lot more stats
     def __init__(self, x=0, y=0, char=1, color=tcod.white):
