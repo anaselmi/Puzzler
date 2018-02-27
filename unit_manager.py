@@ -1,4 +1,4 @@
-class ActiveUnits:
+class UnitManager:
 
     def __init__(self):
         self.active_list = []

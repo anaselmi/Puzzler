@@ -4,7 +4,6 @@ from consts import *
 
 def handle_keys(key):
     # Function that figures out what key was last pressed, performs said action
-    # key = tcod.console_wait_for_keypress(True).vk
     key = key.vk
     if key == tcod.KEY_UP:
         return {"move": (0, -1)}
