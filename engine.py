@@ -36,7 +36,7 @@ def main():
 
 if __name__ == "__main__":
     tcod.console_set_custom_font(FONT_PATH, tcod.FONT_LAYOUT_ASCII_INROW | tcod.FONT_TYPE_GRAYSCALE)
-    tcod.console_init_root(SCREEN_X, SCREEN_Y, GAME_TITLE)
+    tcod.console_init_root(SCREEN_X, SCREEN_Y, GAME_TITLE, fullscreen=True)
 
     con = tcod.console_new(SCREEN_X, SCREEN_Y)
     tcod.console_set_default_foreground(0, tcod.white)
