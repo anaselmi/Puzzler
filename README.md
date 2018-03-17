@@ -30,5 +30,5 @@ Puzzler is an ASCII based roguelike implemented in Python using the libtcod libr
 ### FAQ
 + How do I contribute?
 
-⋅⋅+ I'll have a better idea when this project picks up steam.
+      I'll have a better idea when this project picks up steam.
 
