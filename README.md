@@ -1,11 +1,3 @@
-PUZZLER: THE ROGUELIKE
+#### PUZZLER
 
-PLANS:
-
-v0.01 - Feb 2018
-
-(DONE)Character moves around the screen without shit following him around
-
-(DONE)Game exits when escape is pressed
-
-(TODO)Game has a very basic message log
+Puzzler is an ASCII based roguelike implemented in Python using the libtcod library. 
