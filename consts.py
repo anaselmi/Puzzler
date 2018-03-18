@@ -1,8 +1,8 @@
 import tcod
 
 # Screen Parameters
-SCREEN_X = 40
-SCREEN_Y = 40
+SCREEN_X = 85
+SCREEN_Y = 48
 CENTER_X = SCREEN_X // 2
 CENTER_Y = SCREEN_Y // 2
 GAME_TITLE = "Puzzler: The Roguelike"
