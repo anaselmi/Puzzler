@@ -1,6 +1,6 @@
 #### PUZZLER
 
-Puzzler is an ASCII based roguelike implemented in Python using the libtcod library. Primarily intended to be an excersise in actually organizing and developing a large-scale project, any actual fun generated from code in this repository is purely accidental. 
+Puzzler is an ASCII based roguelike implemented in Python using the tdl library. Primarily intended to be an exercise in actually organizing and developing a large-scale project, any actual fun generated from code in this repository is purely accidental.
 
 ### Features
 + Procedurally generated world
