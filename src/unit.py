@@ -1,4 +1,5 @@
 from consts import *
+from message import Message
 import tcod
 
 
@@ -6,15 +7,15 @@ class Unit:
     # The class from which all game objects inherit from, might just end up being for the PC only
     # TODO: Turn into an ABC
     # TODO: Start adding a lot more stats, only after creating design docs
-    def __init__(self, x=0, y=0, char=1, color=tcod.white, messages=None):
+    def __init__(self, x=0, y=0, char=1, color=tcod.white, texts=[], text_color=tcod.white, text_priority=2):
         self.x = x
         self.y = y
         self.char = char
         self.color = color
-        if messages:
-            self.messages = messages
-        else:
-            self.messages = []
+        self.texts = texts
+        self.text_color = text_color
+        self.text_priority = text_priority
+        self.messages = []
 
     def loop(self):
         # Method that will probably be deprecated fairly soon
@@ -22,19 +23,19 @@ class Unit:
         # Moving left
         if self.x < 0:
             self.x = SCREEN_X - 1
-            self.messages.append("You looped")
+            self.texts.append("You looped")
         # Moving right
         if self.x > SCREEN_X - 1:
             self.x = 0
-            self.messages.append("You looped")
+            self.texts.append("You looped")
         # Moving up
         if self.y < 0:
             self.y = SCREEN_Y - 1
-            self.messages.append("You looped")
+            self.texts.append("You looped")
         # Moving down
         if self.y > SCREEN_Y - 1:
             self.y = 0
-            self.messages.append("You looped")
+            self.texts.append("You looped")
 
     def move(self, update):
         dx = update[0]
@@ -42,20 +43,20 @@ class Unit:
         if dx != 0:
             self.x += dx
 
-            if dx > 1:
-                self.messages.append("You moved right")
-            else:
-                self.messages.append("You moved left")
+            if dx >= 1:
+                direction = "right"
+            elif dx <= -1:
+                direction = "left"
 
-        if dy != 0:
+        elif dy != 0:
             self.y += dy
-            for sd in range(0, 25):
-                self.messages.append(str(sd))
 
-            if dy > 1:
-                self.messages.append("You moved down")
-            else:
-                self.messages.append("You moved up")
+            if dy >= 1:
+                direction = "down"
+            elif dy <= -1:
+                direction = "up"
+
+        self.texts.append("You moved " + direction)
 
         self.loop()
 
@@ -67,9 +68,16 @@ class Unit:
         # Call after blitting and flushing con
         tcod.console_put_char(console, self.x, self.y, T_SPACE, tcod.BKGND_NONE)
 
-    def get_messages(self):
-        new_messages = self.messages
-        self.messages = []
-        return new_messages
+    def output_messages(self):
+        out_messages = []
+        for text in self.texts:
+
+            out_messages.append(Message(text, self.color))
+
+        self.texts = []
+
+
+        return out_messages
+
 
 

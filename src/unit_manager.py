@@ -1,13 +1,14 @@
 class UnitManager:
 
     def __init__(self):
-        self.active_list = []
+        self.active_units = []
 
     def add_unit(self, unit):
-        self.active_list.append(unit)
+        self.active_units.append(unit)
 
     def del_unit(self, unit):
-        self.active_list.append(unit)
+        self.active_units.append(unit)
 
-    def draw_unit(self):
+    def draw_units(self):
         pass
+

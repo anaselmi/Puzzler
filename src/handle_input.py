@@ -19,7 +19,7 @@ def handle_keys(key):
     elif key == tcod.KEY_ESCAPE:
         return {"exit": True}
     elif key == tcod.KEY_0:
-        return {"text_scroll": True}
+        return {"message_scroll": True}
 
     return {}
 
