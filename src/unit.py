@@ -3,9 +3,9 @@ import tcod
 
 
 class Unit:
-    # Potentially the class from which all game objects inherit from, might just end up being for the PC only
-    # TODO: Add an interface for certain methods
-    # TODO: Start adding a lot more stats
+    # The class from which all game objects inherit from, might just end up being for the PC only
+    # TODO: Turn into an ABC
+    # TODO: Start adding a lot more stats, only after creating design docs
     def __init__(self, x=0, y=0, char=1, color=tcod.white, messages=None):
         self.x = x
         self.y = y
@@ -41,11 +41,21 @@ class Unit:
         dy = update[1]
         if dx != 0:
             self.x += dx
-            self.messages.append("You moved l/r")
+
+            if dx > 1:
+                self.messages.append("You moved right")
+            else:
+                self.messages.append("You moved left")
 
         if dy != 0:
             self.y += dy
-            self.messages.append("You moved u/d")
+            for sd in range(0, 25):
+                self.messages.append(str(sd))
+
+            if dy > 1:
+                self.messages.append("You moved down")
+            else:
+                self.messages.append("You moved up")
 
         self.loop()
 
@@ -57,7 +67,9 @@ class Unit:
         # Call after blitting and flushing con
         tcod.console_put_char(console, self.x, self.y, T_SPACE, tcod.BKGND_NONE)
 
-    def get_message(self):
-        return self.messages
+    def get_messages(self):
+        new_messages = self.messages
+        self.messages = []
+        return new_messages
 
 

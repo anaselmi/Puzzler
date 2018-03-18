@@ -12,7 +12,7 @@ def main():
 
         Player.draw(con)
 
-        MesCon.update_archive(Player.get_message())
+        MesCon.update_new(Player.get_messages())
         MesCon.draw()
         MesCon.blit(con)
 
@@ -32,7 +32,6 @@ def main():
             Player.move(move)
         if escape:
             running = False
-        # TODO: use handle_keys and dictionaries to parse and perform actions
 
 
 if __name__ == "__main__":
@@ -47,7 +46,7 @@ if __name__ == "__main__":
 
     MesCon = MessageConsole(SCREEN_X, SCREEN_Y)
 
-    # TODO: Replace this with player creation, also create an actual player that inherits from ABC Unit
+    # TODO: Replace this with player creation
     Player = Unit(CENTER_X, CENTER_Y, T_PLAYER)
 
     key = tcod.Key()
