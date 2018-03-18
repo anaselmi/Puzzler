@@ -3,11 +3,11 @@ import itertools
 
 
 class MessageConsole:
-    def __init__(self, screen_x, screen_y):
-        self.x = int(screen_x / 6)
-        self.y = int(screen_y / 3)
+    def __init__(self, SCREEN_X, SCREEN_Y):
+        self.x = int(SCREEN_X)
+        self.y = int(SCREEN_Y / 3)
         self.console = tcod.console_new(self.x, self.y)
-        self.message_archive = []
+        self.message_archive = ["Welcome to Puzzler"]
 
         tcod.console_set_alignment(self.console, tcod.LEFT)
 
@@ -16,13 +16,14 @@ class MessageConsole:
             self.message_archive.append(messages)
 
         elif isinstance(messages, list):
-            self.message_archive = itertools.chain(self.message_archive, messages)
+            self.message_archive = list(itertools.chain(self.message_archive, messages))
 
         if len(self.message_archive) >= 100:
             pass
 
-    def draw(self, text):
-        tcod.console_print(self.console, 0, 0, text)
+    def draw(self):
+        tcod.console_print(self.console, 0, 0, self.message_archive[-1])
+        print(self.message_archive[-1])
 
     def clear(self):
         self.console.clear()

@@ -41,9 +41,11 @@ class Unit:
         dy = update[1]
         if dx != 0:
             self.x += dx
+            self.messages.append("You moved l/r")
 
         if dy != 0:
             self.y += dy
+            self.messages.append("You moved u/d")
 
         self.loop()
 
@@ -54,5 +56,8 @@ class Unit:
     def clear(self, console):
         # Call after blitting and flushing con
         tcod.console_put_char(console, self.x, self.y, T_SPACE, tcod.BKGND_NONE)
+
+    def get_message(self):
+        return self.messages
 
 

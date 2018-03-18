@@ -18,7 +18,8 @@ def main():
         tcod.console_flush()
         Player.clear(con)
 
-        MesCon.draw("WOW")
+        MesCon.update_archive(Player.get_message())
+        MesCon.draw()
         MesCon.blit(con)
         MesCon.clear()
 
