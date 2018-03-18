@@ -7,20 +7,20 @@ from message_console import *
 
 def main():
 
-    key = tcod.Key()
-    mouse = tcod.Mouse()
-
     running = True
     while not tcod.console_is_window_closed() and running:
 
         Player.draw(con)
-        tcod.console_blit(con, 0, 0, SCREEN_X + 1, SCREEN_Y, 0, 0, 0)
-        tcod.console_flush()
-        Player.clear(con)
 
         MesCon.update_archive(Player.get_message())
         MesCon.draw()
         MesCon.blit(con)
+
+        # Moving contents of con to root console
+        tcod.console_blit(con, 0, 0, SCREEN_X + 1, SCREEN_Y, 0, 0, 0)
+        tcod.console_flush()
+
+        Player.clear(con)
         MesCon.clear()
 
         tcod.sys_wait_for_event(tcod.EVENT_KEY_PRESS, key, mouse, True)
@@ -36,15 +36,22 @@ def main():
 
 
 if __name__ == "__main__":
+
+    # Root console, DO NOT DRAW ONTO THIS, ONLY BLIT
     tcod.console_set_custom_font(FONT_PATH, tcod.FONT_LAYOUT_ASCII_INROW | tcod.FONT_TYPE_GRAYSCALE)
     tcod.console_init_root(SCREEN_X, SCREEN_Y, GAME_TITLE, fullscreen=True)
 
+    # The console we actually draw onto
     con = tcod.console_new(SCREEN_X, SCREEN_Y)
     tcod.console_set_default_foreground(0, tcod.white)
 
     MesCon = MessageConsole(SCREEN_X, SCREEN_Y)
 
+    # TODO: Replace this with player creation, also create an actual player that inherits from ABC Unit
     Player = Unit(CENTER_X, CENTER_Y, T_PLAYER)
+
+    key = tcod.Key()
+    mouse = tcod.Mouse()
 
     main()
 

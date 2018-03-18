@@ -1,12 +1,13 @@
 import tcod
 import itertools
 
-
+# TODO: Create console handler
 class MessageConsole:
     def __init__(self, SCREEN_X, SCREEN_Y):
         self.x = int(SCREEN_X)
         self.y = int(SCREEN_Y / 3)
         self.console = tcod.console_new(self.x, self.y)
+        #TODO: Make Welcome to Puzzler blit before first character action
         self.message_archive = ["Welcome to Puzzler"]
 
         tcod.console_set_alignment(self.console, tcod.LEFT)
