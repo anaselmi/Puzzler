@@ -8,11 +8,4 @@ class Message:
         # The lower the priority the better, only the PC can be 0
         self.priority = priority
 
-    def __cmp__(self, other):
-        if self.priority > other.priority:
-            return 1
-        elif self.priority < other.priority:
-            return -1
-        else:
-            return 0
 
