@@ -7,6 +7,8 @@ CENTER_X = SCREEN_X // 2
 CENTER_Y = SCREEN_Y // 2
 GAME_TITLE = "Puzzler: The Roguelike"
 FONT_PATH = "terminal.png"
+FONT_SIZE = 8
+STARTING_MESSAGE = "Welcome to Puzzler"
 
 # Colors
 WHITE = tcod.Color(255, 255, 255)

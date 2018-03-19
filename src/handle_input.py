@@ -1,6 +1,9 @@
 import tcod
 from consts import *
 
+# TODO: Add integration
+# TODO: Use handle_keys and dictionaries to parse and perform actions
+
 
 def handle_keys(key):
     # Function that figures out what key was last pressed, performs said action
@@ -15,6 +18,8 @@ def handle_keys(key):
         return {"move": (1, 0)}
     elif key == tcod.KEY_ESCAPE:
         return {"exit": True}
+    elif key == tcod.KEY_0:
+        return {"message_scroll": True}
 
     return {}
 
