@@ -1,3 +1,4 @@
+import tdl
 import tcod
 
 

@@ -1,3 +1,4 @@
+import tdl
 import tcod
 from consts import *
 from handle_input import *
