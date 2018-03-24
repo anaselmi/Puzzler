@@ -42,7 +42,7 @@ def main():
 if __name__ == "__main__":
 
     # Root console, DO NOT DRAW ONTO THIS, ONLY BLIT
-    tdl.set_font(FONT_PATH, greyscale=False, altLayout=True)
+    tdl.set_font(FONT_PATH, greyscale=True, altLayout=True)
     Root = tdl.init(SCREEN_X, SCREEN_Y, title=GAME_TITLE, fullscreen=True)
 
     # The console we actually draw onto
