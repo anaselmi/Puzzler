@@ -18,7 +18,7 @@ class MessageWindow:
         self.y = int(SCREEN_Y / 5)
 
         self.window = tdl.Window(root, 0, 0, None, self.y)
-        self.window.set_colors(fg=BLACK, bg=(222, 184, 135))
+        self.window.set_colors(fg=BLACK, bg=BEIGE)
         self.root = root
         # Messages currently being displayed
         self.current = current

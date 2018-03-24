@@ -16,3 +16,4 @@ STARTING_MESSAGE = "Welcome to Puzzler."
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
+BEIGE = (222, 184, 135)
