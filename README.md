@@ -29,41 +29,6 @@ Puzzler is an ASCII based roguelike written in Python using TDL. Primarily inten
 #### Screenshots
 ![March 18, 2018](https://i.imgur.com/Erd8ZA5.png?1)
 
-#### Worldbuilding
-*The Puzzler, more myth than memory, still eludes all who trace her footsteps.*
-
-*The wars we've waged.*
-
-*The nations we've destroyed.*
-
-*The holies we've profaned.*
-
-*For us, there is no redemption. There are some things even she can't do.*
-
-*Even as the wisest among us say her departure is final, we search. They search.*
-
-*We ruin the books we once read, for now they only lie.*
-
-*We burn the maps we once trusted, for now they only lead us astray.*
-
-*And now we shut our eyes even to the stars themselves.*
-
-*But if the effort was futile, then what do we have?*
-
-*There is nothing we wouldn't do. Nothing we haven't already done.*
-
-*And so we sin.*
-
-*And we all do, for how could we not. This world was not made for the weak.*
-
-*We made it that way.*
-
-*I know she's not coming back. I think we all do.*
-
-*Even the Gods have abandoned hope, even the Gods chase her yet.*
-
-More to come soon
-
 #### Design Documents
 Mechanically, the game is still very much in flux. 
 
