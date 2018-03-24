@@ -8,7 +8,6 @@ from consts import *
 def handle_input(input):
     # Function that figures out what key was last pressed, performs said action
     key = input.key
-    print(key)
     if key == "UP":
         return {"move": (0, -1)}
     elif key == "DOWN":

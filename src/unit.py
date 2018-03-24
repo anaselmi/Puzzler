@@ -9,7 +9,7 @@ class Unit:
     # The class from which all game objects inherit from, might just end up being for the PC only
     # TODO: Turn into an ABC
     # TODO: Start adding a lot more stats, only after creating design docs
-    def __init__(self, fg, bg, console, x=0, y=0, char=1, texts=[], text_color=tcod.white):
+    def __init__(self, fg, bg, window, x=0, y=0, char=1, texts=[], text_color=tcod.white):
         self.x = x
         self.y = y
         self.char = char
@@ -17,7 +17,7 @@ class Unit:
         self.bg = bg
         self.texts = texts
         self.text_color = text_color
-        self.console = console
+        self.window = window
         self.messages = []
         self.ticker = self.x
 
@@ -65,18 +65,18 @@ class Unit:
 
         self.loop()
 
-    def draw(self, console=None):
-        console = self.console_missing(console)
-        console.draw_char(self.x, self.y, self.char, bg=(0, 0, 0), fg=(255, 255, 255))
+    def draw(self, window=None):
+        window = self.window_missing(window)
+        window.draw_char(self.x, self.y, self.char, bg=(0, 0, 0), fg=(255, 255, 255))
 
-    def clear(self, console=None):
-        console = self.console_missing(console)
-        console.draw_char(self.x, self.y, char=" ")
+    def clear(self, window=None):
+        window = self.window_missing(window)
+        window.draw_char(self.x, self.y, char=" ")
 
-    def console_missing(self, console):
-        if console is None:
-            return self.console
-        return console
+    def window_missing(self, window):
+        if window is None:
+            return self.window
+        return window
 
     def output_messages(self):
         out_messages = []

@@ -3,7 +3,7 @@ import tcod
 from consts import *
 from handle_input import *
 from unit import *
-from message_console import *
+from message_window import *
 from message import Message
 
 
@@ -16,13 +16,13 @@ def main():
         Player.draw()
 
         # Message Console drawing
-        MesCon.draw()
+        MesWin.draw()
 
         tdl.flush()
 
         # Clear all sub consoles for next loop
         Player.clear()
-        MesCon.clear()
+        MesWin.clear()
 
         # Event handling/ Logic
         input = tdl.event.key_wait()
@@ -36,7 +36,7 @@ def main():
             running = False
 
         # Grab messages from the last turn to draw
-        MesCon.update(Player.output_messages())
+        MesWin.update(Player.output_messages())
 
 
 if __name__ == "__main__":
@@ -46,15 +46,15 @@ if __name__ == "__main__":
     Root = tdl.init(SCREEN_X, SCREEN_Y, title=GAME_TITLE, fullscreen=True)
 
     # The console we actually draw onto
-    Con = tdl.Window(Root, 0, 0, None, None)
+    GWin = tdl.Window(Root, 0, 0, None, None)
 
     StartMessage = Message(STARTING_MESSAGE)
     # The console our messages are drawn onto
-    MesCon = MessageConsole(SCREEN_X, SCREEN_Y, root=Root, current=[StartMessage])
+    MesWin = MessageWindow(SCREEN_X, SCREEN_Y, root=Root, current=[StartMessage])
 
     # TODO: Replace this with player creation
     # Player character
-    Player = Unit(x=CENTER_X, y=CENTER_Y, char='@', bg=None, fg=(255,255,255), console=Root)
+    Player = Unit(x=CENTER_X, y=CENTER_Y, char='@', bg=None, fg=(255,255,255), window=GWin)
 
     main()
 

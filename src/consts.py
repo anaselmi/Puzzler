@@ -9,26 +9,10 @@ CENTER_X = SCREEN_X // 2
 CENTER_Y = SCREEN_Y // 2
 GAME_TITLE = "Puzzler: The Roguelike"
 FONT_PATH = "arial12x12.png"
-FONT_SIZE = 8
-STARTING_MESSAGE = "Welcome to Puzzler"
+FONT_SIZE = 12
+STARTING_MESSAGE = "Welcome to Puzzler."
 
 # Colors
-WHITE = tcod.Color(255, 255, 255)
-
-# Tile Characters
-T_SPACE = 0
-T_PLAYER = 1
-
-# Action Types
-PLAYER_ACTION = {
-    tcod.KEY_UP: "M_UP",
-    tcod.KEY_DOWN: "M_DOWN",
-    tcod.KEY_LEFT: "M_LEFT",
-    tcod.KEY_RIGHT: "M_RIGHT"
-}
-GAME_ACTION = {
-    tcod.KEY_ESCAPE : "QUIT"
-}
-
-
-
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)

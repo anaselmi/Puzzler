@@ -10,7 +10,7 @@ from message import Message
 # TODO: Create a MapConsole
 
 
-class MessageConsole:
+class MessageWindow:
     # TODO: Add logic to MCon that allows it to either calculate its own size or simply use parameters given
     # TODO: MCon takes flags that alter what is printed
     def __init__(self, SCREEN_X, SCREEN_Y, root, current=[]):
@@ -18,9 +18,8 @@ class MessageConsole:
         self.y = int(SCREEN_Y / 5)
 
         self.window = tdl.Window(root, 0, 0, None, self.y)
-        self.window.set_colors(fg=(0, 0, 0), bg=(200, 200, 200))
+        self.window.set_colors(fg=BLACK, bg=(222, 184, 135))
         self.root = root
-
         # Messages currently being displayed
         self.current = current
 
@@ -32,22 +31,25 @@ class MessageConsole:
         self.purge_current()
 
     def purge_current(self):
-        # Updates current so that only the most recent messages are printed and we dont print outside of the console
-        while len(self.current) > self.y:
+        # We subtract 1 from y to make sure we don't draw text onto the frame
+        while len(self.current) >= self.y - 1:
             del self.current[0]
 
     def draw(self):
-        # TODO
-        # Draw should be a simple function
-        # Index is to make sure messages don't print on top of each other and don't print out of console
-        assert(len(self.current) <= self.y)
+        self.fill()
+        self.frame()
+        assert(len(self.current) < self.y)
         for i, message in enumerate(self.current):
             text = message.text
             color = message.color
-            self.window.draw_str(0, i, text)
+            # We add 1 to i to make sure we don't draw onto the frame
+            self.window.draw_str(1, i+1, text)
 
     def frame(self):
-        self.window
+        self.window.draw_frame(0, 0, None, None, ".", WHITE, BLACK)
+
+    def fill(self):
+        self.window.draw_rect(0, 0, None, None, None)
 
     def clear(self):
         self.window.clear()
