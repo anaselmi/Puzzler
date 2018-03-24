@@ -1,3 +1,6 @@
+import tdl
+import tcod
+
 class UnitManager:
 
     def __init__(self):
