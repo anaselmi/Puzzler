@@ -30,8 +30,8 @@ Puzzler is an ASCII based roguelike written in Python using TDL. Primarily inten
 March 18, 2018
 ![March 18, 2018](https://i.imgur.com/Erd8ZA5.png?1)
 
-March 28, 2018
-![March 18, 2018](https://i.imgur.com/3oiL3Se.png?1)
+March 24, 2018
+![March 24, 2018](https://i.imgur.com/1csvmxE.png)
 
 #### Design Documents
 Mechanically, the game is still very much in flux. 
