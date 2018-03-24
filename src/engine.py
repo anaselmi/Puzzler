@@ -3,7 +3,7 @@ import tcod
 from consts import *
 from handle_input import *
 from unit import *
-from message_window import *
+from windows import *
 from message import Message
 
 
@@ -17,6 +17,8 @@ def main():
 
         # Message Console drawing
         MesWin.draw()
+
+        Root.blit(Con)
 
         tdl.flush()
 
@@ -46,11 +48,13 @@ if __name__ == "__main__":
     Root = tdl.init(SCREEN_X, SCREEN_Y, title=GAME_TITLE, fullscreen=True)
 
     # The console we actually draw onto
-    GWin = tdl.Window(Root, 0, 0, None, None)
+    Con = tdl.Console(SCREEN_X, SCREEN_Y)
+
+    GWin = tdl.Window(Con, 0, 0, None, None)
 
     StartMessage = Message(STARTING_MESSAGE)
     # The console our messages are drawn onto
-    MesWin = MessageWindow(SCREEN_X, SCREEN_Y, root=Root, current=[StartMessage])
+    MesWin = MessageWindow(SCREEN_X, SCREEN_Y, root=Con, current=[StartMessage])
 
     # TODO: Replace this with player creation
     # Player character
