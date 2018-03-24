@@ -3,12 +3,12 @@ import tcod
 
 
 # Screen Parameters
-SCREEN_X = 85
-SCREEN_Y = 48
+SCREEN_X = 113
+SCREEN_Y = 64
 CENTER_X = SCREEN_X // 2
 CENTER_Y = SCREEN_Y // 2
 GAME_TITLE = "Puzzler: The Roguelike"
-FONT_PATH = "terminal.png"
+FONT_PATH = "arial12x12.png"
 FONT_SIZE = 8
 STARTING_MESSAGE = "Welcome to Puzzler"
 

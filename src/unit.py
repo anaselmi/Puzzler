@@ -9,15 +9,17 @@ class Unit:
     # The class from which all game objects inherit from, might just end up being for the PC only
     # TODO: Turn into an ABC
     # TODO: Start adding a lot more stats, only after creating design docs
-    def __init__(self, x=0, y=0, char=1, color=tcod.white, texts=[], text_color=tcod.white, text_priority=2):
+    def __init__(self, fg, bg, console, x=0, y=0, char=1, texts=[], text_color=tcod.white):
         self.x = x
         self.y = y
         self.char = char
-        self.color = color
+        self.fg = fg
+        self.bg = bg
         self.texts = texts
         self.text_color = text_color
-        self.text_priority = text_priority
+        self.console = console
         self.messages = []
+        self.ticker = self.x
 
     def loop(self):
         # Method that will probably be deprecated fairly soon
@@ -47,6 +49,7 @@ class Unit:
 
             if dx >= 1:
                 direction = "right"
+                self.ticker += 1
             elif dx <= -1:
                 direction = "left"
 
@@ -62,23 +65,26 @@ class Unit:
 
         self.loop()
 
-    def draw(self, console):
-        # Call before blitting and flushing con
-        tcod.console_put_char(console, self.x, self.y, self.char, tcod.BKGND_NONE)
+    def draw(self, console=None):
+        console = self.console_missing(console)
+        console.draw_char(self.x, self.y, self.char, bg=(0, 0, 0), fg=(255, 255, 255))
 
-    def clear(self, console):
-        # Call after blitting and flushing con
-        tcod.console_put_char(console, self.x, self.y, T_SPACE, tcod.BKGND_NONE)
+    def clear(self, console=None):
+        console = self.console_missing(console)
+        console.draw_char(self.x, self.y, char=" ")
+
+    def console_missing(self, console):
+        if console is None:
+            return self.console
+        return console
 
     def output_messages(self):
         out_messages = []
         for text in self.texts:
 
-            out_messages.append(Message(text, self.color))
+            out_messages.append(Message(text, self.fg))
 
         self.texts = []
-
-
         return out_messages
 
 

@@ -13,15 +13,15 @@ from message import Message
 class MessageConsole:
     # TODO: Add logic to MCon that allows it to either calculate its own size or simply use parameters given
     # TODO: MCon takes flags that alter what is printed
-    # TODO: Player always printed first
-    def __init__(self, SCREEN_X, SCREEN_Y, current=[]):
+    def __init__(self, SCREEN_X, SCREEN_Y, root, current=[]):
         self.x = int(SCREEN_X)
-        self.y = int(SCREEN_Y / 4)
+        self.y = int(SCREEN_Y / 5)
 
-        self.console = tcod.console_new(self.x, self.y)
-        tcod.console_set_alignment(self.console, tcod.LEFT)
+        self.window = tdl.Window(root, 0, 0, None, self.y)
+        self.window.set_colors(fg=(0, 0, 0), bg=(200, 200, 200))
+        self.root = root
 
-        # Messages from the newest turn
+        # Messages currently being displayed
         self.current = current
 
     def update(self, messages):
@@ -37,16 +37,17 @@ class MessageConsole:
             del self.current[0]
 
     def draw(self):
+        # TODO
         # Draw should be a simple function
         # Index is to make sure messages don't print on top of each other and don't print out of console
         assert(len(self.current) <= self.y)
         for i, message in enumerate(self.current):
             text = message.text
             color = message.color
-            tcod.console_print(self.console, 0, i, text)
+            self.window.draw_str(0, i, text)
+
+    def frame(self):
+        self.window
 
     def clear(self):
-        self.console.clear()
-
-    def blit(self, console):
-        tcod.console_blit(self.console, 0, 0, 0, 0, console, 0, 0)
+        self.window.clear()
