@@ -50,11 +50,13 @@ if __name__ == "__main__":
     # The console we actually draw onto
     Con = tdl.Console(SCREEN_X, SCREEN_Y)
 
-    GWin = tdl.Window(Con, 0, 0, None, None)
-
     StartMessage = Message(STARTING_MESSAGE)
     # The console our messages are drawn onto
     MesWin = MessageWindow(SCREEN_X, SCREEN_Y, root=Con, current=[StartMessage])
+
+    game_y = MesWin.y
+
+    GWin = tdl.Window(Con, 0, game_y, None, None)
 
     # TODO: Replace this with player creation
     # Player character

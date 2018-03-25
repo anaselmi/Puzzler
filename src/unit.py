@@ -19,27 +19,26 @@ class Unit:
         self.text_color = text_color
         self.window = window
         self.messages = []
-        self.ticker = self.x
 
     def loop(self):
         # Method that will probably be deprecated fairly soon
 
         # Moving left
         if self.x < 0:
-            self.x = SCREEN_X - 1
-            self.texts.append("You looped")
+            self.x = self.window.width - 1
+            self.texts.append("You looped to the right.")
         # Moving right
-        if self.x > SCREEN_X - 1:
+        if self.x > self.window.width - 1:
             self.x = 0
-            self.texts.append("You looped")
+            self.texts.append("You looped to the left.")
         # Moving up
         if self.y < 0:
-            self.y = SCREEN_Y - 1
-            self.texts.append("You looped")
+            self.y = self.window.height - 1
+            self.texts.append("You looped to the bottom.")
         # Moving down
-        if self.y > SCREEN_Y - 1:
+        if self.y > self.window.height - 1:
             self.y = 0
-            self.texts.append("You looped")
+            self.texts.append("You looped to the top.")
 
     def move(self, update):
         dx = update[0]
@@ -48,18 +47,17 @@ class Unit:
             self.x += dx
 
             if dx >= 1:
-                direction = "right"
-                self.ticker += 1
+                direction = "right."
             elif dx <= -1:
-                direction = "left"
+                direction = "left."
 
         elif dy != 0:
             self.y += dy
 
             if dy >= 1:
-                direction = "down"
+                direction = "down."
             elif dy <= -1:
-                direction = "up"
+                direction = "up."
 
         self.texts.append("You moved " + direction)
 
