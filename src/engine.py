@@ -60,7 +60,7 @@ if __name__ == "__main__":
 
     # TODO: Replace this with player creation
     # Player character
-    Player = Unit(x=CENTER_X, y=CENTER_Y, char='@', bg=None, fg=(255,255,255), window=GWin)
+    Player = Unit(x=CENTER_X, y=CENTER_Y, char='@', bg=None, fg=WHITE, window=GWin)
 
     main()
 

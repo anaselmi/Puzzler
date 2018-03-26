@@ -1,6 +1,3 @@
-import tdl
-import tcod
-
 
 # Screen Parameters
 SCREEN_X = 113
