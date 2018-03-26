@@ -63,7 +63,7 @@ class Unit:
 
         self.loop()
 
-    def draw(self, window=None):
+    def render(self, window=None):
         window = self.window_missing(window)
         window.draw_char(self.x, self.y, self.char, bg=(0, 0, 0), fg=(255, 255, 255))
 
@@ -84,6 +84,7 @@ class Unit:
 
         self.texts = []
         return out_messages
+
 
 
 

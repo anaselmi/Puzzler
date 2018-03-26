@@ -13,7 +13,7 @@ def main():
     while not tdl.event.is_window_closed() and running:
 
         # Unit drawing
-        Player.draw()
+        Player.render()
 
         # Message Console drawing
         MesWin.draw()
