@@ -27,8 +27,8 @@ def main():
         MesWin.clear()
 
         # Event handling/ Logic
-        input = tdl.event.key_wait()
-        action = handle_input(input)
+        inpt = tdl.event.key_wait()
+        action = handle_input(inpt)
         move = action.get("move")
         escape = action.get("exit")
 
