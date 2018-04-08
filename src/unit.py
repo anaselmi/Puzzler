@@ -1,7 +1,6 @@
 import tdl
 import tcod
 from consts import *
-from message import Message
 import tcod
 
 

@@ -1,19 +1,18 @@
 import tdl
-import tcod
+import esper
 from consts import *
 from handle_input import *
 from unit import *
 from windows import *
-from message import Message
+from ecs.ecs_processors import *
 
 
 def main():
 
     running = True
-    while not tdl.event.is_window_closed() and running:
+    while running and not tdl.event.is_window_closed():
 
-        # Unit drawing
-        Player.render()
+        World.process()
 
         # Message Console drawing
         MesWin.draw()
@@ -22,45 +21,60 @@ def main():
 
         tdl.flush()
 
-        # Clear all sub consoles for next loop
-        Player.clear()
-        MesWin.clear()
-
         # Event handling/ Logic
-        inpt = tdl.event.key_wait()
-        action = handle_input(inpt)
+        button = tdl.event.key_wait()
+        action = handle_input(button)
         move = action.get("move")
         escape = action.get("exit")
 
         if move:
-            Player.move(move)
+            x = move[0]
+            y = move[1]
+            PCMovingComp.x = x
+            PCMovingComp.y = y
         if escape:
             running = False
 
         # Grab messages from the last turn to draw
-        MesWin.update(Player.output_messages())
+        #MesWin.process(Player.output_messages())
+
+        World.process()
 
 
 if __name__ == "__main__":
 
-    # Root console, DO NOT DRAW ONTO THIS, ONLY BLIT
+    # Root console
     tdl.set_font(FONT_PATH, greyscale=True, altLayout=True)
     Root = tdl.init(SCREEN_X, SCREEN_Y, title=GAME_TITLE, fullscreen=True)
 
-    # The console we actually draw onto
+    # The console we create windows from
     Con = tdl.Console(SCREEN_X, SCREEN_Y)
 
-    StartMessage = Message(STARTING_MESSAGE)
-    # The console our messages are drawn onto
-    MesWin = MessageWindow(SCREEN_X, SCREEN_Y, root=Con, current=[StartMessage])
+    # The window our messages are drawn onto
+    StartMessage = [START_MESSAGE]
+    MesWin = MessageWindow(SCREEN_X, SCREEN_Y, root=Con, current=StartMessage)
 
-    game_y = MesWin.y
+    GWin = tdl.Window(Con, 0, MesWin.y, None, None)
 
-    GWin = tdl.Window(Con, 0, game_y, None, None)
+    World = esper.World()
 
-    # TODO: Replace this with player creation
-    # Player character
-    Player = Unit(x=CENTER_X, y=CENTER_Y, char='@', bg=None, fg=WHITE, window=GWin)
+    Player = World.create_entity()
+    World.add_component(Player, Moving(x=0, y=0))
+    World.add_component(Player, Renderable(0, 0, "@"))
+    World.add_component(Player, Logging())
+    PCMovingComp = World.component_for_entity(Player, Moving)
+
+    render_processor = RenderProcessor(GWin)
+    World.add_processor(render_processor)
+
+    movement_processor = MovementProcessor(SCREEN_X, SCREEN_Y)
+    World.add_processor(movement_processor)
+
+    looping_processor = LoopingProcessor(GWin)
+    World.add_processor(looping_processor)
+
+    logging_processor = LoggingProcessor(MesWin)
+    World.add_processor(logging_processor)
 
     main()
 

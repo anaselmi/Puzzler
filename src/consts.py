@@ -7,7 +7,7 @@ CENTER_Y = SCREEN_Y // 2
 GAME_TITLE = "Puzzler: The Roguelike"
 FONT_PATH = "courier12x12.png"
 FONT_SIZE = 12
-STARTING_MESSAGE = "Welcome to Puzzler."
+START_MESSAGE = "Welcome to Puzzler."
 
 # TODO Figure out consistent palette and add colors here
 # Colors

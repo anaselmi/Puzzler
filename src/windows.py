@@ -2,7 +2,6 @@ import tdl
 import tcod
 import itertools
 from consts import *
-from message import Message
 
 # TODO: Create console as an ABC
 # TODO: Create ConsoleHandler
@@ -23,7 +22,7 @@ class MessageWindow:
         # Messages currently being displayed
         self.current = current
 
-    def update(self, messages):
+    def process(self, messages):
         # Loop brings in recent messages
         # Loop should always clear itself at the end of a loop
         assert(isinstance(messages, list))
@@ -39,9 +38,7 @@ class MessageWindow:
         self.fill()
         self.frame()
         assert(len(self.current) < self.y)
-        for i, message in enumerate(self.current):
-            text = message.text
-            color = message.color
+        for i, text in enumerate(self.current):
             # We add 1 to i to make sure we don't draw onto the frame
             self.window.draw_str(1, i+1, text)
 
