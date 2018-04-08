@@ -57,26 +57,28 @@ class LoopingProcessor(esper.Processor):
 
     def process(self):
         for ent, rend in self.world.get_component(Renderable):
+            message = ""
             # Moving left
             if rend.x < self.min_x:
                 rend.x = self.max_x - 1
-                message = "You looped left!"
+                message = "You looped to the right!"
             # Moving right
-            if rend.x > self.max_x - 1:
+            elif rend.x > self.max_x - 1:
                 rend.x = self.min_x
-            message = "You looped right!"
+                message = "You looped to the left!"
             # Moving up
-            if rend.y < self.min_y:
+            elif rend.y < self.min_y:
                 rend.y = self.max_y - 1
-            message = "You looped up!"
+                message = "You looped to the bottom!"
             # Moving down
-            if rend.y > self.max_y - 1:
+            elif rend.y > self.max_y - 1:
                 rend.y = self.min_y
-                message = "You looped down!"
+                message = "You looped to the top!"
 
             if self.world.has_component(ent, Logging):
                 log = self.world.component_for_entity(ent, Logging)
-                log.messages += message
+                if message:
+                    log.messages.append(message)
 
 
 class LoggingProcessor(esper.Processor):
