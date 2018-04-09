@@ -5,24 +5,35 @@ import esper
 
 class RenderProcessor(esper.Processor):
 
-    def __init__(self, window, clear_color=WHITE):
+    def __init__(self, window):
         super().__init__()
         self.window = window
-        self.clear_color = clear_color
 
     def process(self):
         self.window.clear()
-        for ent, rend in self.world.get_component(Renderable):
-            self.window.draw_char(rend.x, rend.y, rend.char)
 
+        # This allows the game to always draw the player on top of everything else
+        playable = []
+        for ent, rend in self.world.get_component(Renderable):
+            if not rend.active:
+                continue
+            if self.world.has_component(ent, Playable):
+                playable.append(rend)
+                continue
+
+            self.window.draw_char(rend.x, rend.y, rend.char, fg=rend.fg)
+
+        for rend in playable:
+            self.window.draw_char(rend.x, rend.y, rend.char, fg=rend.fg)
 
 
 class Renderable:
-    def __init__(self, x, y, char, color=WHITE):
+    def __init__(self, x, y, char, fg=WHITE, active=True):
         self.x = x
         self.y = y
         self.char = char
-        self.color = color
+        self.fg = fg
+        self.active = active
 
 
 class MovementProcessor(esper.Processor):
@@ -32,17 +43,18 @@ class MovementProcessor(esper.Processor):
         self.window_y = window_y
 
     def process(self):
-        for ent, (mov, rend) in self.world.get_components(Moving, Renderable):
-            rend.x += mov.x
-            rend.y += mov.y
-            mov.x = 0
-            mov.y = 0
+        for ent, (vel, rend) in self.world.get_components(Velocity, Renderable):
+            rend.x += vel.x * vel.speed
+            rend.y += vel.y * vel.speed
+            vel.x = 0
+            vel.y = 0
 
 
-class Moving:
-    def __init__(self, x, y):
+class Velocity:
+    def __init__(self, x=0, y=0, speed=1):
         self.x = x
         self.y = y
+        self.speed = speed
 
 
 class LoopingProcessor(esper.Processor):
@@ -56,48 +68,57 @@ class LoopingProcessor(esper.Processor):
         self.max_y = self.window.height
 
     def process(self):
-        for ent, rend in self.world.get_component(Renderable):
+        for ent, (vel, rend) in self.world.get_components(Velocity, Renderable):
             message = ""
             # Moving left
             if rend.x < self.min_x:
                 rend.x = self.max_x - 1
-                message = "You looped to the right!"
+                message = " looped to the right!"
             # Moving right
             elif rend.x > self.max_x - 1:
                 rend.x = self.min_x
-                message = "You looped to the left!"
+                message = " looped to the left!"
             # Moving up
             elif rend.y < self.min_y:
                 rend.y = self.max_y - 1
-                message = "You looped to the bottom!"
+                message = " looped to the bottom!"
             # Moving down
             elif rend.y > self.max_y - 1:
                 rend.y = self.min_y
-                message = "You looped to the top!"
+                message = " looped to the top!"
+            else:
+                continue
+            if not self.world.has_component(ent, Describable):
+                continue
 
-            if self.world.has_component(ent, Logging):
-                log = self.world.component_for_entity(ent, Logging)
-                if message:
-                    log.messages.append(message)
+            desc = self.world.component_for_entity(ent, Describable)
+            logging_processor = self.world.get_processor(LoggingProcessor)
+            message = [desc.reference + message]
+            logging_processor.add_messages(message)
 
 
 class LoggingProcessor(esper.Processor):
-    def __init__(self, window, outgoing=[]):
+    def __init__(self, window, messages=[]):
         super().__init__()
         self.window = window
-        self.outgoing = outgoing
-
-    # Sends out a list of recent messages from all entities, and resets their lists
-    def process(self):
-        for ent, log in self.world.get_component(Logging):
-            if not log.messages:
-                pass
-            self.outgoing = list(chain(self.outgoing, log.messages))
-            log.messages = []
-        self.window.process(self.outgoing)
-        self.outgoing = []
-
-
-class Logging:
-    def __init__(self, messages=[]):
         self.messages = messages
+
+    # Sends out a list of recent messages from all processes that sent them
+    def process(self):
+        self.window.process(self.messages)
+        self.messages = []
+
+    def add_messages(self, messages):
+        self.messages = list(chain(self.messages, messages))
+
+
+class Describable:
+    def __init__(self, name, reference, description):
+        self.name = name
+        self.reference = reference
+        self.description = description
+
+
+class Playable:
+    def __init__(self):
+        pass
