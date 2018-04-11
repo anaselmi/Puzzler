@@ -6,8 +6,10 @@
       <w>gleamer</w>
       <w>kazaram</w>
       <w>loggable</w>
+      <w>pathable</w>
       <w>renderable</w>
       <w>roguelike</w>
+      <w>unrendered</w>
     </words>
   </dictionary>
 </component>
