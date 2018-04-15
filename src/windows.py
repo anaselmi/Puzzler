@@ -23,11 +23,10 @@ class MessageWindow:
             self.window.draw_str(1, i+1, text)
 
     def process(self, messages):
-        # Loop brings in recent messages
-        # Loop should always clear itself at the end of a loop
-        assert(isinstance(messages, list))
+        self.clear()
         self.recent_messages = list(itertools.chain(self.recent_messages, messages))
         self.purge_recent()
+        self.draw()
 
     def purge_recent(self):
         # We subtract 1 from y to make sure we don't draw text onto the frame
