@@ -1,6 +1,7 @@
 import esper
 
 
+# Not sure whether or not this object should facilitate inter-processor communication
 class ProcessorManager(esper.World):
 
     def process(self, *args):

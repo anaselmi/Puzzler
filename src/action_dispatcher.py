@@ -1,3 +1,4 @@
+from src.input_handler import InputHandler
 
 
 # Responsible for taking an action and chain feeding it to different functions/methods
@@ -11,7 +12,8 @@ class ActionDispatcher:
     # which either returns None, signifying that it has been parsed and handled
     # the same action, signifying that it has not been parsed, or ellipses, signifying
     # that is has been parsed and the subscriber requires further input
-    def dispatch(self, action):
+    def dispatch(self, _input):
+        action = InputHandler.process(_input)
         if self.current_priority is None:
             for subscriber in self.subscribers:
                 action = subscriber.process(action)

@@ -30,3 +30,9 @@ class InputHandler:
             return "LOOK"
         return None
 
+    # Not really possible to use this on the class itself as it tries to
+    # instantiate a new object, maybe hijack new if we really need this
+    # functionality but for now its better to call process
+    def __call__(self, _input):
+        return self.process(_input)
+

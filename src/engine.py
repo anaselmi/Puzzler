@@ -77,9 +77,9 @@ if __name__ == "__main__":
     render_processor = RenderProcessor(GWin)
     World.add_processor(render_processor)
 
-    position_processor = PositionProcessor(GWin, GMap)
+    position_processor = PositionProcessor(dimensions=(50, 50))
     World.add_processor(position_processor, priority=1)
 
-    logging_processor = LoggingProcessor(MesWin)
-    World.add_processor(logging_processor)
-    logging_processor.add_messages(START_MESSAGE)
+    message_processor = MessageProcessor(MesWin)
+    World.add_processor(message_processor_processor)
+    message_processor.add_messages(START_MESSAGE)

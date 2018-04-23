@@ -1,56 +1,39 @@
 import esper
 from itertools import chain
-from src.consts import *
 from src.ecs.components import *
 
 
 class RenderProcessor(esper.Processor):
 
-    def __init__(self, window):
+    def __init__(self, ui_dimensions, level_dimensions):
         super().__init__()
-        self.window = window
+        self.ui_dimensions = ui_dimensions
+        self.ui_x, self.ui_y = ui_dimensions
+        self.level_dimensions = level_dimensions
+        self.level_x, self.level_y = level_dimensions
 
-    def process(self, context):
-        # []
-        updated_entities = list(self.world.get_components(Renderable, Positionable, Velocity))
+    def process(self):
+        updated_entities = list(self.world.get_components(Renderable, Positionable))
         updated_entities.sort(key=lambda x: x[1][0].priority)
         for ent, (rend, pos, mov) in updated_entities:
             rend.x = pos.x
             rend.y = pos.y
-            self.window.draw_char(rend.x, rend.y, rend.char)
 
 
 class PositionProcessor(esper.Processor):
-    def __init__(self, window, game_map):
+    def __init__(self, level_dimensions):
         super().__init__()
-        self.window = window
-        self.game_map = game_map
+        self.level_x, self.level_y = level_dimensions
 
-    def process(self, context):
-        # Moves all entities with a velocity if the target tile is pathable
-        for ent, pos in self.world.get_component(Positionable):
-            if self.world.has_component(ent, Velocity):
-                pos.moved = True
-                vel = self.world.component_for_entity(ent, Velocity)
-                loop = vel.loop
-                tangible = pos.tangible
-                target_x = pos.x + vel.x
-                target_y = pos.y + vel.y
-                if loop:
-                    target_x, target_y = self.loop(target_x, target_y)
-                    tile_contents = self.game_map.tile_contents(target_x, target_y)
-                if tangible and tile_contents:
-                    for entity in tile_contents:
-                        if self.check_conflicts(ent, entity):
-                            move = False
-                            break
-
-                if pos.moved:
-                    self.game_map.update_entity(ent, target_x, target_y)
-                    pos.x = target_x
-                    pos.y = target_y
-                vel.x = 0
-                vel.y = 0
+    def process(self):
+        # Moves all entities with a velocity
+        for ent, (pos, vel) in self.world.get_components(Positionable, Velocity):
+            if vel.dx != 0 or vel.dy != 0:
+                continue
+            else:
+                # Might want to cast these to int's later
+                pos.x += vel.dx
+                pos.y += vel.dy
 
 
 class MessageProcessor(esper.Processor):
@@ -65,7 +48,7 @@ class MessageProcessor(esper.Processor):
             self.add_messages(mes.messages)
             mes.messages = []
 
-    def add_messages(self, messages):
+    def add_messages(self, entity, messages):
         self.messages = list(chain(self.messages, messages))
 
     def send_messages(self):
