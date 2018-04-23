@@ -1,15 +1,14 @@
 
 # Screen Parameters
-SCREEN_X = 113
-SCREEN_Y = 64
-CENTER_X = SCREEN_X // 2
-CENTER_Y = SCREEN_Y // 2
+SCREEN_WIDTH = 113
+SCREEN_HEIGHT = 64
+CENTER_X = SCREEN_WIDTH // 2
+CENTER_Y = SCREEN_HEIGHT // 2
 GAME_TITLE = "Puzzler: The Roguelike"
-FONT_PATH = "courier12x12.png"
+FONT_PATH = "assets\\courier12x12.png"
 FONT_SIZE = 12
-START_MESSAGE = ["Welcome to Puzzler!", "You see a gleamer before you."]
+START_MESSAGE = ["Welcome to Puzzler!"]
 
-# TODO Figure out consistent palette and add colors here
 # Colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -17,3 +16,7 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 BEIGE = (222, 184, 135)
+
+P_D_GREEN = (62, 81, 74)
+P_L_GREEN = (101, 110, 85)
+P_D_BLUE = (63, 68, 80)

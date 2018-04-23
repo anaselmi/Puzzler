@@ -1,84 +1,53 @@
 import esper
 import tdl
-from consts import *
-from ecs.ecs_processors import *
-from windows import *
-from handle_button import *
+import logging
+from src.helper_functions import silent_console
+from src.user_interface.ui_manager import UIManager
+from src.input_handler import InputHandler
+from src.action_dispatcher import ActionDispatcher
+from src.ecs.processors import *
+from src.consts import *
 
 
-def main():
+class Engine:
+    def __init__(self, size=(SCREEN_WIDTH, SCREEN_HEIGHT), font=FONT_PATH, log=False):
+        self.log = log
+        self.screen_width, self.screen_height = size
+        self.font = font
+        tdl.set_font(font, greyscale=True, altLayout=True)
+        self.root = tdl.init(SCREEN_WIDTH, SCREEN_HEIGHT, title=GAME_TITLE, fullscreen=True)
+        if not self.log:
+            # Useful for silencing the amount of printing this function does
+            self.console = silent_console(self.screen_width, self.screen_height)
+        else:
+            self.console = tdl.Console(self.screen_width, self.screen_height)
 
-    running = True
-    while running and not tdl.event.is_window_closed():
+        self.ui_manager = UIManager(self.console, (self.screen_width, self.screen_height))
+        priority_stack = [self.ui_manager, self.world]
+        self.action_dispatcher = ActionDispatcher(priority_stack)
 
-        World.process()
+    def load_level(self, world, level_size):
+        self.world = world
+        self.level_x, self.level_y = level_size
+        self.level = [[] for _ in self.level_x for _ in self.level_y]
+        self.ui_manager.handle_level(self.level)
 
-        MesWin.draw()
-
-        Root.blit(Con)
-
-        tdl.flush()
-
-        # Event handling/ Logic
-        button = tdl.event.key_wait()
-        action, value = ButtonMan.process(button)
-        state = ButtonMan.state
-        state_switch = False
-
-        if action == "quit_game":
-            running = False
-            continue
-
-        if state is None:
-            if action == "move":
-                x = value[0]
-                y = value[1]
-                PlayerVelocityComp.x = x
-                PlayerVelocityComp.y = y
-
-        elif state == "look":
-            if action == "change_state":
-                CursorRenderableComp.active = True
-                CursorRenderableComp.x = PlayerRenderableComp.x
-                CursorRenderableComp.y = PlayerRenderableComp.y
-            if action == "move_cursor":
-                x = value[0]
-                y = value[1]
-                CursorVelocityComp.x = x
-                CursorVelocityComp.y = y
-            if action == "look":
-                target_x = CursorRenderableComp.x
-                target_y = CursorRenderableComp.y
-
-            if action == "change_back" and value is None:
-                state_switch = True
-
-            if state_switch:
-                CursorRenderableComp.active = False
-                ButtonMan.state = None
-
-        MesWin.clear()
-        World.process()
+    def loop(self):
+        self.action_dispatcher(None)
+        self.running = True
+        while self.running and not tdl.event.is_window_closed():
+            self.root.blit(self.console)
+            tdl.flush()
+            # Event handling/logic
+            _input = tdl.event.key_wait()
+            action = InputHandler.process(_input)
+            if action == "QUIT_GAME":
+                self.running = False
+            else:
+                self.action_dispatcher.dispatch(action)
 
 
 if __name__ == "__main__":
-
-    # Root console
-    tdl.set_font(FONT_PATH, greyscale=True, altLayout=True)
-    Root = tdl.init(SCREEN_X, SCREEN_Y, title=GAME_TITLE, fullscreen=True)
-
-    # The console we create windows from
-    Con = tdl.Console(SCREEN_X, SCREEN_Y)
-
-    # The window we draw onto drawn onto
-    MesWin = MessageWindow(SCREEN_X, SCREEN_Y, con=Con)
-    GWin = tdl.Window(Con, 0, MesWin.y, None, None)
-
-    ButtonMan = HandleButton()
-
-    World = esper.World()
-
-    GMap = GameMap(GWin.width, GWin.height, World)
 
     Player = World.create_entity()
     World.add_component(Player, Renderable("@", priority=2))

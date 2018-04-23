@@ -1,7 +1,7 @@
-from src.consts import *
-from ecs.components import *
-from itertools import chain
 import esper
+from itertools import chain
+from src.consts import *
+from src.ecs.components import *
 
 
 class RenderProcessor(esper.Processor):
@@ -12,12 +12,9 @@ class RenderProcessor(esper.Processor):
 
     def process(self, context):
         # []
-        updated_entities = list(self.world.get_components(Renderable, Positionable, Moving))
+        updated_entities = list(self.world.get_components(Renderable, Positionable, Velocity))
         updated_entities.sort(key=lambda x: x[1][0].priority)
         for ent, (rend, pos, mov) in updated_entities:
-            # NOTE: if a character with low priority moves to a tile where a character with high priority was just
-            # at, they will not be shown
-            self.window.draw_char(mov.old_x, mov.old_y, char=None)
             rend.x = pos.x
             rend.y = pos.y
             self.window.draw_char(rend.x, rend.y, rend.char)
