@@ -3,7 +3,6 @@ import itertools
 from src.consts import *
 
 
-# TODO: Create class that feeds data into this UI and screen UI
 class MessageUI:
     def __init__(self, console, size, destination=(0, 0), fg=BLUE, bg=BLACK, frame_color=WHITE, frame_char="."):
         self.console = console
@@ -13,7 +12,7 @@ class MessageUI:
         self.bg = bg
         self.frame_color = frame_color
         self.frame_char = frame_char
-        self.window = tdl.Window(con, self.x, self.y, width, height)
+        self.window = tdl.Window(self.console, self.x, self.y, width, height)
         self.width, self.height = self.window.get_size()
         self.window.set_colors(fg=self.fg, bg=self.bg)
         self.messages = []

@@ -1,33 +1,31 @@
-from src.consts import *
 
 
 class Renderable:
-    def __init__(self, char, fg=WHITE, active=True, priority=0):
+    def __init__(self, char, pos=(None, None), fg=None, bg=None, active=True, priority=0):
+        # Position relative to the screen
+        self.x, self.y = pos
         self.char = char
         self.fg = fg
+        self.bg = bg
         self.active = active
         self.priority = priority
-        self.x = None
-        self.y = None
 
 
 class Playable:
-    def __init__(self):
-        pass
+    def __init__(self, is_player=True):
+            self.is_player = is_player
 
 
 class Velocity:
-    def __init__(self, x=0, y=0, loop=True):
-        self.x = x
-        self.y = y
-        self.loop = loop
+    def __init__(self, difference=(0, 0)):
+        self.dx, self.dy = difference
 
 
 class Positionable:
-    def __init__(self, x, y, tangible=True, pathable=True):
+    def __init__(self, x, y, pathable=True):
+        # Position in actual space
         self.x = x
         self.y = y
-        self.tangible = tangible
         self.pathable = pathable
         self.moved = True
 
@@ -37,5 +35,10 @@ class Describable:
         self.name = name
         self.reference = reference
         self.description = description
+
+
+class Messaging:
+    def __init__(self, messages):
+        self.messages = messages
 
 

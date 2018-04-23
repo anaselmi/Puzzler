@@ -6,6 +6,8 @@ from src.user_interface.ui_manager import UIManager
 from src.input_handler import InputHandler
 from src.action_dispatcher import ActionDispatcher
 from src.ecs.processors import *
+from src.ecs.components import *
+from src.ecs.processor_manager import ProcessorManager
 from src.consts import *
 
 
@@ -44,13 +46,14 @@ class Engine:
             if action == "QUIT_GAME":
                 self.running = False
             else:
-                self.action_dispatcher.dispatch(action)
+                self.action_dispatcher(action)
 
 
 if __name__ == "__main__":
 
+    World = ProcessorManager()
     Player = World.create_entity()
-    World.add_component(Player, Renderable("@", priority=2))
+    World.add_component(Player, Renderable(char="@", fg=White, priority=2))
     World.add_component(Player, Positionable(CENTER_X, CENTER_Y))
     World.add_component(Player, Velocity())
     World.add_component(Player, Describable("Player", "You", "lost Assembler with a freshly minted Royal Seal."))
@@ -80,5 +83,3 @@ if __name__ == "__main__":
     logging_processor = LoggingProcessor(MesWin)
     World.add_processor(logging_processor)
     logging_processor.add_messages(START_MESSAGE)
-
-    main()

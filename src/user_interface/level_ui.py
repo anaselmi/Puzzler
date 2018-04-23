@@ -3,7 +3,6 @@ import itertools
 from src.consts import *
 
 
-# TODO: Create class that feeds data into this UI and screen UI
 class LevelUI:
     def __init__(self, console, size, destination=(0, 0), fg=WHITE, bg=P_D_GREEN, default_char="."):
         self.console = console
