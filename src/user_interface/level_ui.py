@@ -1,6 +1,7 @@
 import tdl
 import itertools
 from src.consts import *
+from src.camera import Camera
 
 
 class LevelUI:
@@ -18,7 +19,7 @@ class LevelUI:
 
     def draw(self):
         self._fill()
-        for y in self.level:
+        for y in self.tiles:
             for x in y:
                 fg = x.get("fg")
                 bg = x.get("bg")
@@ -26,15 +27,10 @@ class LevelUI:
                 self.window.draw_char(x, y, fg, bg, char)
 
     def process(self, action):
-        return action
-
-    def handle(self, level):
-        # There should be a better way of passing level data along, maybe have
-        # the process method create the nested list of dictionaries and
-        # draw simply access that?
-        # possibly be a function that has some level of awareness of current game state
-        self.level = level
         pass
+
+    def handle(self, tiles):
+        self.tiles = tiles
 
     def _fill(self):
         self.window.draw_rect(0, 0, None, None, None)

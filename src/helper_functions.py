@@ -1,6 +1,7 @@
 import sys
 from io import StringIO
-from tdl import Console
+from tdl import Console, init
+
 
 # Ultimately this file will get split up into multiple components if/when it gets large enough
 class NullIO(StringIO):
@@ -25,3 +26,17 @@ def silence(fn):
 @silence
 def silent_console(width, height):
         return Console(width, height)
+
+
+@silence
+def silent_init(width, height, title, fullscreen):
+    return init(width, height, title, fullscreen)
+
+
+@silence
+def silent_set_font(width, height, title, fullscreen):
+    return init(width, height, title, fullscreen)
+
+init(7, 17, "WOW")
+# silent_console(7, 17)
+# Console(7, 17)

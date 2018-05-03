@@ -5,25 +5,37 @@ from src.ecs.components import *
 
 class RenderProcessor(esper.Processor):
 
-    def __init__(self, ui_dimensions, level_dimensions):
+    def __init__(self):
         super().__init__()
-        self.ui_dimensions = ui_dimensions
-        self.ui_x, self.ui_y = ui_dimensions
-        self.level_dimensions = level_dimensions
-        self.level_x, self.level_y = level_dimensions
+        self.tiles = self._reset_tiles()
 
     def process(self):
-        updated_entities = list(self.world.get_components(Renderable, Positionable))
-        updated_entities.sort(key=lambda x: x[1][0].priority)
-        for ent, (rend, pos, mov) in updated_entities:
-            rend.x = pos.x
-            rend.y = pos.y
+        entities = list(self.world.get_components(Renderable, Positionable))
+        # Overwrites tile with entities of higher priorities so that they are drawn on the very top
+        entities.sort(key=lambda entity: entity[1][0].priority, reverse=True)
+        for ent, (rend, pos) in entities:
+            x, y = pos.x, pos.y
+            tile = self.tiles[y][x]
+            tile["fg"] = rend.fg
+            tile["bg"] = rend.bg
+            tile["char"] = rend.char
+
+    def send_tiles(self):
+        tiles = self.tiles
+        self.tiles = self._reset_tiles()
+        return tiles
+
+    def _reset_tiles(self):
+        # tiles is a nested dictionary of tiles contents nested in a list of lists
+        # corresponding to [y][x] dimensions
+        width = self.world.width
+        height = self.world.height
+        return [[{} for _ in range(0, height + 1)] for _ in range(0, width + 1)]
 
 
 class PositionProcessor(esper.Processor):
-    def __init__(self, level_dimensions):
+    def __init__(self):
         super().__init__()
-        self.level_x, self.level_y = level_dimensions
 
     def process(self):
         # Moves all entities with a velocity
@@ -37,9 +49,8 @@ class PositionProcessor(esper.Processor):
 
 
 class MessageProcessor(esper.Processor):
-    def __init__(self, window, messages):
+    def __init__(self, messages):
         super().__init__()
-        self.window = window
         self.messages = messages
 
     # Sends out a list of recent messages from all processes that sent them
@@ -48,7 +59,7 @@ class MessageProcessor(esper.Processor):
             self.add_messages(mes.messages)
             mes.messages = []
 
-    def add_messages(self, entity, messages):
+    def add_messages(self, messages):
         self.messages = list(chain(self.messages, messages))
 
     def send_messages(self):

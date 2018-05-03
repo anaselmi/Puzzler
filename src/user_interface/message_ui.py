@@ -26,7 +26,7 @@ class MessageUI:
             self.window.draw_str(1, i+1, text)
 
     def process(self, action):
-        return action
+        pass
 
     def handle(self, messages):
         self.messages = list(itertools.chain(self.messages, messages))

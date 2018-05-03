@@ -1,44 +1,48 @@
 from src.input_handler import InputHandler
 
 
-# Responsible for taking an action and chain feeding it to different functions/methods
-# until it returns None, which means it is currently at the top of the stack
 class ActionDispatcher:
     def __init__(self, subscribers):
         self.subscribers = subscribers
         self.current_priority = None
 
-    # Everything subscriber of the stack must have a function called handle,
-    # which either returns None, signifying that it has been parsed and handled
-    # the same action, signifying that it has not been parsed, or ellipses, signifying
-    # that is has been parsed and the subscriber requires further input
-    def dispatch(self, _input):
-        action = InputHandler.process(_input)
-        if self.current_priority is None:
-            for subscriber in self.subscribers:
-                action = subscriber.process(action)
-                if action is ...:
-                    self.current_priority = subscriber
-                    break
-        else:
-            current_priority = self.current_priority
-            action = self.current_priority.process(action)
-            if action is not ...:
-                self.current_priority = None
-                if action is not None:
-                    action = self._dispatch_from(action, current_priority)
-        return action
-
-    # This code simply sends an action to the list starting from a current subscriber, useful for resolving
-    # edge cases after resolving a priority subscriber
-    def _dispatch_from(self, action, subscriber):
-        subscriber_index = self.subscribers.index(subscriber)
-        for subscriber in self.subscribers[subscriber_index:]:
-            action = subscriber.process(action)
-            if action is ...:
+    # Every subscriber to the dispatcher must have a function called process.
+    # Process either returns None (signifying that it ran without the action),
+    # the same action (signifying that it has been consumed),
+    # a different action (signifying that it has been consumed and replaced),
+    # or ellipses (signifying that is has been consumed and the subscriber requests more actions).
+    def dispatch(self, action):
+        if self.current_priority is not None:
+            self._priority_dispatch(action)
+            return
+        for subscriber in self.subscribers:
+            result = subscriber.process(action)
+            if result is ...:
                 self.current_priority = subscriber
-                break
-        return action
+            action = self._update_action(action, result)
+
+    # If a subscriber requests more actions, then they get priority over all other processors
+    # until they signify that they no longer want priority by returning None
+    def _priority_dispatch(self, action):
+        result = self.current_priority.process(action)
+        if result is None:
+            self.current_priority = None
+        action = self._update_action(action, result)
+
+        for subscriber in self.subscribers:
+            # Currently not allowing priority to change while we have a current priority
+            # this may change when we actually try it out in practice
+            result = subscriber.process(action)
+            action = self._update_action(action, result)
+
+    @staticmethod
+    def _update_action(action, result):
+        if result is None:
+            return action
+        if result is ... or result == action:
+            return None
+        else:
+            return result
 
     def __call__(self, action):
         return self.dispatch(action)

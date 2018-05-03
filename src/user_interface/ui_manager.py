@@ -17,10 +17,9 @@ class UIManager:
         self.level_ui.clear()
         self.message_ui.draw()
         self.level_ui.draw()
-        return action
 
     def handle_messages(self, messages):
         self.message_ui.handle(messages)
 
-    def handle_level(self, level):
-        self.level_ui.handle(level)
+    def handle_tiles(self, tiles):
+        self.level_ui.handle(tiles)

@@ -1,9 +1,7 @@
 
 
 class Renderable:
-    def __init__(self, char, pos=(None, None), fg=None, bg=None, active=True, priority=0):
-        # Position relative to the screen
-        self.x, self.y = pos
+    def __init__(self, char, fg=None, bg=None, active=True, priority=1):
         self.char = char
         self.fg = fg
         self.bg = bg
