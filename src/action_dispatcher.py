@@ -2,7 +2,8 @@ from src.input_handler import InputHandler
 
 
 class ActionDispatcher:
-    def __init__(self, subscribers):
+    def __init__(self, engine, subscribers):
+        self.engine = engine
         self.subscribers = subscribers
         self.current_priority = None
 

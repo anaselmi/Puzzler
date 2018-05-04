@@ -4,14 +4,15 @@ from src.consts import *
 
 
 class MessageUI:
-    def __init__(self, console, size, destination=(0, 0), fg=BLUE, bg=BLACK, frame_color=WHITE, frame_char="."):
+    def __init__(self, manager, console, size, destination=(0, 0), fg=BLUE, bg=BLACK):
+        self.frame_color = WHITE
+        self.frame_char = "."
+        self.manager = manager
         self.console = console
         width, height = size
         self.x, self.y = destination
         self.fg = fg
         self.bg = bg
-        self.frame_color = frame_color
-        self.frame_char = frame_char
         self.window = tdl.Window(self.console, self.x, self.y, width, height)
         self.width, self.height = self.window.get_size()
         self.window.set_colors(fg=self.fg, bg=self.bg)

@@ -7,13 +7,21 @@ class RenderProcessor(esper.Processor):
 
     def __init__(self):
         super().__init__()
-        self.tiles = self._reset_tiles()
 
     def process(self):
+        # Try block to initialize tiles
+        # when game is running and level size is declared
+        try:
+            self.tiles
+        except AttributeError:
+            self.tiles = self._reset_tiles()
         entities = list(self.world.get_components(Renderable, Positionable))
         # Overwrites tile with entities of higher priorities so that they are drawn on the very top
         entities.sort(key=lambda entity: entity[1][0].priority, reverse=True)
+        priority = None
         for ent, (rend, pos) in entities:
+            if priority is None:
+                priority = ent
             x, y = pos.x, pos.y
             tile = self.tiles[y][x]
             tile["fg"] = rend.fg
@@ -21,19 +29,22 @@ class RenderProcessor(esper.Processor):
             tile["char"] = rend.char
 
     def send_tiles(self):
-        tiles = self.tiles
+        try:
+            tiles = self.tiles
+        except AttributeError:
+            tiles = self._reset_tiles()
         self.tiles = self._reset_tiles()
         return tiles
 
     def _reset_tiles(self):
-        # tiles is a nested dictionary of tiles contents nested in a list of lists
+        # Tiles is a nested dictionary of tiles contents nested in a list of lists
         # corresponding to [y][x] dimensions
         width = self.world.width
         height = self.world.height
-        return [[{} for _ in range(0, height + 1)] for _ in range(0, width + 1)]
+        return [[{} for _ in range(0, height)] for _ in range(0, width)]
 
 
-class PositionProcessor(esper.Processor):
+class VelocityProcessor(esper.Processor):
     def __init__(self):
         super().__init__()
 

@@ -1,12 +1,13 @@
 
 
 class Renderable:
-    def __init__(self, char, fg=None, bg=None, active=True, priority=1):
+    def __init__(self, char, fg=None, bg=None, active=True, priority=1, focus=False):
         self.char = char
         self.fg = fg
         self.bg = bg
         self.active = active
         self.priority = priority
+        self.focus = focus
 
 
 class Playable:

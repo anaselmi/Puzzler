@@ -4,8 +4,9 @@ from src.consts import *
 from src.camera import Camera
 
 
-class LevelUI:
-    def __init__(self, console, size, destination=(0, 0), fg=WHITE, bg=P_D_GREEN, default_char="."):
+class TileUI:
+    def __init__(self, manager, console, size, destination=(0, 0), fg=WHITE, bg=P_D_GREEN, default_char="."):
+        self.manager = manager
         self.console = console
         width, height = size
         self.x, self.y = destination
@@ -18,12 +19,14 @@ class LevelUI:
         self.window.set_colors(fg=self.fg, bg=self.bg)
 
     def draw(self):
+        camera = self.manager.engine.camera
         self._fill()
-        for y in self.tiles:
-            for x in y:
-                fg = x.get("fg")
-                bg = x.get("bg")
-                char = x.get("char")
+        for y, row in enumerate(self.tiles):
+            for x, tile in enumerate(row):
+                position = x, y
+                fg = tile.get("fg")
+                bg = tile.get("bg")
+                char = tile.get("char")
                 self.window.draw_char(x, y, fg, bg, char)
 
     def process(self, action):
