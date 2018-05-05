@@ -9,39 +9,23 @@ class RenderProcessor(esper.Processor):
         super().__init__()
 
     def process(self):
-        # Try block to initialize tiles
-        # when game is running and level size is declared
-        try:
-            self.tiles
-        except AttributeError:
-            self.tiles = self._reset_tiles()
+        pass
+
+    def get_entities(self):
         entities = list(self.world.get_components(Renderable, Positionable))
-        # Overwrites tile with entities of higher priorities so that they are drawn on the very top
         entities.sort(key=lambda entity: entity[1][0].priority, reverse=True)
-        priority = None
-        for ent, (rend, pos) in entities:
-            if priority is None:
-                priority = ent
-            x, y = pos.x, pos.y
-            tile = self.tiles[y][x]
-            tile["fg"] = rend.fg
-            tile["bg"] = rend.bg
-            tile["char"] = rend.char
+        return entities
 
-    def send_tiles(self):
-        try:
-            tiles = self.tiles
-        except AttributeError:
-            tiles = self._reset_tiles()
-        self.tiles = self._reset_tiles()
-        return tiles
-
-    def _reset_tiles(self):
-        # Tiles is a nested dictionary of tiles contents nested in a list of lists
-        # corresponding to [y][x] dimensions
-        width = self.world.width
-        height = self.world.height
-        return [[{} for _ in range(0, height)] for _ in range(0, width)]
+    def get_center(self):
+        # List of all entities in the world that can be rendered and are the PC
+        players = [x for x in self.world.get_components(Playable, Renderable, Positionable) if x[1][0].is_player]
+        if players:
+            # Ensures we have one PC, as we always should
+            if len(players) != 1:
+                print("CANNOT BE CERTAIN THIS IS THE RIGHT CENTER")
+            pos = players[0][1][2]
+            return pos.x, pos.y
+        raise RuntimeError
 
 
 class VelocityProcessor(esper.Processor):
@@ -73,7 +57,7 @@ class MessageProcessor(esper.Processor):
     def add_messages(self, messages):
         self.messages = list(chain(self.messages, messages))
 
-    def send_messages(self):
+    def get_messages(self):
         messages = self.messages
         self.messages = []
         return messages

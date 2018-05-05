@@ -29,7 +29,7 @@ class MessageUI:
     def process(self, action):
         pass
 
-    def handle(self, messages):
+    def update(self, messages):
         self.messages = list(itertools.chain(self.messages, messages))
         self._delete_old_messages()
 

@@ -17,26 +17,29 @@ class TileUI:
         # Width and height aren't assigned to the object to account for initializing window with None
         self.width, self.height = self.window.get_size()
         self.window.set_colors(fg=self.fg, bg=self.bg)
+        self.tiles = None
 
     def draw(self):
-        camera = self.manager.engine.camera
+        camera = self.manager.camera
         self._fill()
-        for y, row in enumerate(self.tiles):
-            for x, tile in enumerate(row):
-                position = x, y
-                fg = tile.get("fg")
-                bg = tile.get("bg")
+        for unadjusted_y, row in enumerate(self.tiles):
+            for unadjusted_x, tile in enumerate(row):
+                x = unadjusted_x
+                y = unadjusted_y
+                fg = tile.get("fg", ...)
+                bg = tile.get("bg", ...)
                 char = tile.get("char")
-                self.window.draw_char(x, y, fg, bg, char)
+                self.window.draw_char(x, y, char=char, fg=fg, bg=bg)
 
     def process(self, action):
         pass
 
-    def handle(self, tiles):
+    def update(self, tiles):
         self.tiles = tiles
 
     def _fill(self):
         self.window.draw_rect(0, 0, None, None, None)
 
     def clear(self):
+        self.tiles = None
         self.window.clear(fg=self.fg, bg=self.bg)
