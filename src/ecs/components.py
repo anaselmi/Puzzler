@@ -41,3 +41,9 @@ class Messaging:
         self.messages = messages
 
 
+class TurnTaking:
+    def __init__(self, speed=10, energy=0, energy_cap=200, current_turn=False):
+        self.speed = speed
+        self.energy = energy
+        self.energy_cap = energy_cap
+        self.current_turn = current_turn

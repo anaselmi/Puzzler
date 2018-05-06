@@ -20,9 +20,9 @@ class Engine:
     def create_action_dispatcher(self):
         self.action_dispatcher = ActionDispatcher(self, [])
 
-    def create_ui_manager(self):
-        self.ui_manager = UIManager(self, (self.screen_width, self.screen_height))
-        self.action_dispatcher.subscribers.append(self.ui_manager)
+    def create_game_ui(self):
+        self.game_ui = UIManager(self, (self.screen_width, self.screen_height))
+        self.action_dispatcher.subscribers.append(self.game_ui)
 
     def create_world(self, size):
         self.world = WorldManager(engine, size)
@@ -30,32 +30,53 @@ class Engine:
         self.create_processors()
 
     def create_processors(self):
+        processors = []
+
         message_processor = proc.MessageProcessor(START_MESSAGE)
-        self.world.add_processor(message_processor)
+        processors.append(message_processor)
         render_processor = proc.RenderProcessor()
-        self.world.add_processor(render_processor)
+        processors.append(render_processor)
         position_processor = proc.VelocityProcessor()
-        self.world.add_processor(position_processor)
+        processors.append(position_processor)
+        action_processor = proc.ActionProcessor()
+        processors.append(action_processor)
+        turn_processor = proc.TurnProcessor()
+        processors.append(turn_processor)
+
+        for i, processor in enumerate(processors):
+            self.world.add_processor(processor, priority=i)
+
+    def create_player(self):
+        components = []
+
+        player_position = (comp.Positionable(0, 0))
+        components.append(player_position)
+        player_render = comp.Renderable(char="@", fg=WHITE, priority=0)
+        components.append(player_render)
+        player_description = comp.Describable("Player", "You", "A young Inquisitor with a freshly sealed writ.")
+        components.append(player_description)
+        player_playable = comp.Playable()
+        components.append(player_playable)
+        player_turn = comp.TurnTaking()
+        components.append(player_turn)
+        player_vel = comp.Velocity()
+        components.append(player_vel)
+
+        player = self.world.create_entity()
+        for component in components:
+            self.world.add_component(player, component)
 
     def create_camera(self):
         world_size = self.world.width, self.world.height
-        self.ui_manager.create_camera(world_size)
-
-    @staticmethod
-    def create_player():
-        player_position = (comp.Positionable(0, 0))
-        player_render = comp.Renderable(char="@", fg=WHITE, priority=0)
-        player_description = comp.Describable("Player", "You", "A young Inquisitor with a freshly sealed writ.")
-        player_playable = comp.Playable()
-        engine.world.create_entity(player_position, player_render, player_description, player_playable)
+        self.game_ui.create_camera(world_size)
 
     def loop(self):
-        self.action_dispatcher.dispatch(None)
+        self.action_dispatcher(None)
         self.running = True
         while self.running and not tdl.event.is_window_closed():
-            self.ui_manager.update()
+            self.game_ui.update()
             self.root.blit(self.console)
-            self.ui_manager.clear()
+            self.game_ui.clear()
             tdl.flush()
             # Event handling/logic
             _input = tdl.event.key_wait()
@@ -64,16 +85,16 @@ class Engine:
                 self.running = False
             else:
                 self.action_dispatcher(action)
-
+                self.world.update()
 
 if __name__ == "__main__":
     engine = Engine()
     engine.create_action_dispatcher()
-    engine.create_ui_manager()
+    engine.create_game_ui()
     engine.create_world(SCREEN_SIZE)
     engine.create_processors()
-    engine.create_camera()
     engine.create_player()
+    engine.create_camera()
     engine.loop()
 
 

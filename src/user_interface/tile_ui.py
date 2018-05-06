@@ -28,7 +28,7 @@ class TileUI:
                 y = unadjusted_y
                 fg = tile.get("fg", ...)
                 bg = tile.get("bg", ...)
-                char = tile.get("char")
+                char = tile.get("char", self.default_char)
                 self.window.draw_char(x, y, char=char, fg=fg, bg=bg)
 
     def process(self, action):

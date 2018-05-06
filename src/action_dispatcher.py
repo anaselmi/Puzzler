@@ -12,7 +12,7 @@ class ActionDispatcher:
     # the same action (signifying that it has been consumed),
     # a different action (signifying that it has been consumed and replaced),
     # or ellipses (signifying that is has been consumed and the subscriber requests more actions).
-    def dispatch(self, action):
+    def handle(self, action):
         if self.current_priority is not None:
             self._priority_dispatch(action)
             return
@@ -24,7 +24,7 @@ class ActionDispatcher:
 
     # If a subscriber requests more actions, then they get priority over all other subscribers
     # until they signify that they no longer want priority by returning None
-    def _priority_dispatch(self, action):
+    def _priority_handle(self, action):
         result = self.current_priority.handle(action)
         if result is None:
             self.current_priority = None
@@ -46,7 +46,7 @@ class ActionDispatcher:
             return result
 
     def __call__(self, action):
-        return self.dispatch(action)
+        return self.handle(action)
 
 
 

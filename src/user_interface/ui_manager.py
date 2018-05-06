@@ -61,7 +61,10 @@ class UIManager:
             if pos is None:
                 continue
             x, y = pos
-            tile = tiles[y][x]
+            try:
+                tile = tiles[y][x]
+            except IndexError:
+                continue
             char = rend_component.char
             tile["char"] = char
             fg = rend_component.fg
