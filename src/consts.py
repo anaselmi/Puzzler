@@ -13,6 +13,8 @@ START_MESSAGE = ["Welcome to Puzzler!"]
 # Colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+D_GREY = (200, 200, 200)
+M_GREY = (150, 150, 150)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)

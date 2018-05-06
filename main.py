@@ -40,8 +40,8 @@ class Engine:
         processors.append(position_processor)
         action_processor = pro.ActionProcessor()
         processors.append(action_processor)
-        turn_processor = pro.TurnProcessor()
-        processors.append(turn_processor)
+        tick_processor = pro.TickProcessor()
+        processors.append(tick_processor)
 
         for i, processor in enumerate(processors):
             self.world.add_processor(processor, priority=i)
@@ -57,8 +57,8 @@ class Engine:
         components.append(player_description)
         player_playable = comp.Playable()
         components.append(player_playable)
-        player_turn = comp.TurnTaking()
-        components.append(player_turn)
+        player_tick = comp.Ticking()
+        components.append(player_tick)
         player_vel = comp.Velocity()
         components.append(player_vel)
 
@@ -79,12 +79,14 @@ class Engine:
             self.root.blit(self.console)
             self.game_ui.clear()
             tdl.flush()
-            # Event handling
+            # Input handling
             _input = tdl.event.key_wait()
-            action = InputHandler.process(_input)
+            action = InputHandler.handle(_input)
             if action == "QUIT_GAME":
                 self.running = False
+            # Action handling
             self.action_dispatcher(action)
+            # Runs the world until game reaches a point where input is required
             self.world.update()
 
 if __name__ == "__main__":
