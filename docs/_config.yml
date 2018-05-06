@@ -1,8 +1,8 @@
 title: Puzzler
 email: elmi.anas@gmail.com
 description: >-
-    Puzzler is a roguelike.
-baseurl: /Puzzler
+    Puzzler is a fantasy roguelike that combines classic dungeon crawling with a grand strategy twist.
+baseurl: /puzzler
 url: https://anaselmi.github.io
 github_username:  anaselmi
 theme: minima
