@@ -1,5 +1,6 @@
 import tdl
 import itertools
+from src.ecs.processors import MessageProcessor
 from src.consts import *
 
 
@@ -29,7 +30,12 @@ class MessageUI:
     def process(self, action):
         pass
 
-    def update(self, messages):
+    def update(self):
+        message_processor = self.manager.engine.world.get_processor(MessageProcessor)
+        messages = message_processor.get_messages()
+        self.add_messages(messages)
+
+    def add_messages(self, messages):
         self.messages = list(itertools.chain(self.messages, messages))
         self._delete_old_messages()
 

@@ -59,8 +59,10 @@ class VelocityProcessor(esper.Processor):
         for ent, (pos, vel) in self.world.get_components(Positionable, Velocity):
             if vel.dx == 0 and vel.dy == 0:
                 continue
-            pos.x += vel.dx
-            pos.y += vel.dy
+            print(pos.x, pos.y, "BEFORE")
+            pos.x = int(pos.x + vel.dx)
+            pos.y = int(pos.y + vel.dy)
+            print(pos.x, pos.y, "AFTER")
             vel.dx = 0
             vel.dy = 0
 
@@ -84,25 +86,34 @@ class ActionProcessor(esper.Processor):
             vel = self.world.component_for_entity(entity, Velocity)
             if action == "MOVE_NORTH":
                 vel.dy -= 1
+                direction = "north."
             elif action == "MOVE_SOUTH":
                 vel.dy += 1
+                direction = "south."
             elif action == "MOVE_EAST":
                 vel.dx += 1
+                direction = "east."
             elif action == "MOVE_WEST":
                 vel.dx -= 1
+                direction = "west."
             elif action == "MOVE_NORTHWEST":
                 vel.dy -= 1
                 vel.dx -= 1
+                direction = "northwest."
             elif action == "MOVE_SOUTHWEST":
                 vel.dy += 1
                 vel.dx -= 1
+                direction = "southwest."
             elif action == "MOVE_NORTHEAST":
                 vel.dy -= 1
                 vel.dx += 1
+                direction = "northeast."
             elif action == "MOVE_SOUTHEAST":
                 vel.dy += 1
                 vel.dx += 1
-            print(vel.dx, vel.dy)
+                direction = "southeast."
+            message = "You moved " + direction
+            self.world.add_message(entity, message)
 
 
 # Vocabulary:

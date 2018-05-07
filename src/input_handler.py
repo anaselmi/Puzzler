@@ -4,6 +4,10 @@ class InputHandler:
     # be parsed by any game element that requires user input
     @staticmethod
     def handle(_input):
+        print(_input)
+        _input_type = _input.type
+        if _input_type != "KEYDOWN":
+            return None
         key = _input.keychar
         if key == 'ESCAPE':
             return "QUIT_GAME"

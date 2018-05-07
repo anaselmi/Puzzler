@@ -25,13 +25,14 @@ class Engine:
         self.action_dispatcher.subscribers.append(self.game_ui)
 
     def create_world(self, size):
+        assert(isinstance(size[0], int))
+        assert(isinstance(size[1], int))
         self.world = WorldManager(engine, size)
         self.action_dispatcher.subscribers.append(self.world)
         self.create_processors()
 
     def create_processors(self):
         processors = []
-
         message_processor = pro.MessageProcessor(START_MESSAGE)
         processors.append(message_processor)
         render_processor = pro.RenderProcessor()
@@ -71,23 +72,34 @@ class Engine:
         self.game_ui.create_camera(world_size)
 
     def loop(self):
-        self.action_dispatcher(None)
+        self.world.update()
+        self.game_ui.update()
+        self.game_ui.draw()
+        self.root.blit(self.console)
+        self.game_ui.clear()
+        tdl.flush()
         self.running = True
         while self.running and not tdl.event.is_window_closed():
             # Updating and drawing to screen
-            self.game_ui.update()
+            self.game_ui.draw()
             self.root.blit(self.console)
             self.game_ui.clear()
             tdl.flush()
             # Input handling
-            _input = tdl.event.key_wait()
-            action = InputHandler.handle(_input)
+            inputs = list(tdl.event.get())
+            inputs.reverse()
+            for _input in inputs:
+                action = InputHandler.handle(_input)
+                if action is not None:
+                    break
+            else:
+                action = None
             if action == "QUIT_GAME":
                 self.running = False
             # Action handling
             self.action_dispatcher(action)
-            # Runs the world until game reaches a point where input is required
             self.world.update()
+            self.game_ui.update()
 
 if __name__ == "__main__":
     engine = Engine()

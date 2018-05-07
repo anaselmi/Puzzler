@@ -37,8 +37,11 @@ class Describable:
 
 
 class Messaging:
-    def __init__(self, messages):
-        self.messages = messages
+    def __init__(self, messages=None):
+        if not messages:
+            self.messages = []
+        else:
+            self.messages = messages
 
 
 class Ticking:
