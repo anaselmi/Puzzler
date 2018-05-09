@@ -15,17 +15,17 @@ class UIManager:
         self._create_message_ui(size=(None, None), destination=(0, tile_ui_height))
 
     def _create_message_ui(self, size, destination):
-        self.message_ui = MessageUI(self, self.console, size=size, destination=destination)
+        self.message_ui = MessageUI(self.console, size=size, destination=destination)
         self.windows.append(self.message_ui)
 
     def _create_tile_ui(self, size, destination):
-        self.tile_ui = TileUI(self, self.console, size=size, destination=destination)
+        self.tile_ui = TileUI(self.console, size=size, destination=destination)
         self.windows.append(self.tile_ui)
 
     def handle(self, action):
         pass
 
-    def update(self):
+    def draw(self):
         self._update_message_ui()
         self._update_tile_ui()
         self._draw_to_console()

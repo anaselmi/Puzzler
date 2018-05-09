@@ -71,14 +71,19 @@ class Engine:
         self.running = True
         while self.running and not tdl.event.is_window_closed():
             # Updating and drawing to screen
-            self.game_ui.update()
+            self.game_ui.draw()
             self.root.blit(self.console)
             self.game_ui.clear()
             tdl.flush()
             # Input handling
-            _input = tdl.event.key_wait()
-            action = InputHandler.handle(_input)
-            if action == "QUIT_GAME":
+            _inputs = list(tdl.event.get())
+            for _input in _inputs:
+                action = InputHandler.handle(_input)
+                break
+            else:
+                action = {}
+
+            if action.get("EXIT"):
                 self.running = False
             # Action handling
             self.action_dispatcher(action)

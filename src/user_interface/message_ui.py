@@ -1,21 +1,17 @@
 import tdl
 import itertools
+from src.ecs.ui import UI
 from src.consts import *
 
 
-class MessageUI:
-    def __init__(self, manager, console, size, destination=(0, 0), fg=D_GREY, bg=BLACK):
+class MessageUI(UI):
+    def __init__(self, console, size, destination):
+        fg = D_GREY
+        bg = BLACK
+        super().__init__(console, size, destination, fg, bg)
+
         self.frame_color = WHITE
         self.frame_char = "."
-        self.manager = manager
-        self.console = console
-        width, height = size
-        self.x, self.y = destination
-        self.fg = fg
-        self.bg = bg
-        self.window = tdl.Window(self.console, self.x, self.y, width, height)
-        self.width, self.height = self.window.get_size()
-        self.window.set_colors(fg=self.fg, bg=self.bg)
         self.messages = []
 
     def draw(self):

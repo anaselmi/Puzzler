@@ -77,32 +77,32 @@ class ActionProcessor(esper.Processor):
     def handle(self, entity, action):
         if action is None:
             return
-        if action[0:4] == "MOVE":
+        move = action.get("MOVE")
+        if move:
             if not self.world.has_component(entity, Velocity):
                 print(entity)
                 return
             vel = self.world.component_for_entity(entity, Velocity)
-            if action == "MOVE_NORTH":
+            if move == "NORTH":
                 vel.dy -= 1
-            elif action == "MOVE_SOUTH":
+            elif move == "SOUTH":
                 vel.dy += 1
-            elif action == "MOVE_EAST":
+            elif move == "EAST":
                 vel.dx += 1
-            elif action == "MOVE_WEST":
+            elif move == "WEST":
                 vel.dx -= 1
-            elif action == "MOVE_NORTHWEST":
+            elif move == "NORTHWEST":
                 vel.dy -= 1
                 vel.dx -= 1
-            elif action == "MOVE_SOUTHWEST":
+            elif move == "SOUTHWEST":
                 vel.dy += 1
                 vel.dx -= 1
-            elif action == "MOVE_NORTHEAST":
+            elif move == "NORTHEAST":
                 vel.dy -= 1
                 vel.dx += 1
-            elif action == "MOVE_SOUTHEAST":
+            elif move == "SOUTHEAST":
                 vel.dy += 1
                 vel.dx += 1
-            print(vel.dx, vel.dy)
 
 
 # Vocabulary:

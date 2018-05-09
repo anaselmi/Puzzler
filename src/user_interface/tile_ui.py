@@ -1,21 +1,16 @@
 import tdl
 import itertools
+from src.ecs.ui import UI
 from src.consts import *
 
 
-class TileUI:
-    def __init__(self, manager, console, size, destination=(0, 0), fg=P_L_GREEN, bg=BLACK, default_char="."):
-        self.manager = manager
-        self.console = console
-        width, height = size
-        self.x, self.y = destination
-        self.fg = fg
-        self.bg = bg
-        self.default_char = default_char
-        self.window = tdl.Window(self.console, self.x, self.y, width, height)
-        # Width and height aren't assigned to the object to account for initializing window with None
-        self.width, self.height = self.window.get_size()
-        self.window.set_colors(fg=self.fg, bg=self.bg)
+class TileUI(UI):
+    def __init__(self, console, size, destination):
+        fg = P_L_GREEN
+        bg = BLACK
+        super().__init__(console, size, destination, fg, bg)
+
+        self.default_char = "."
         self.tiles = None
 
     def draw(self):
