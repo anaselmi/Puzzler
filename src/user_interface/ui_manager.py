@@ -1,4 +1,3 @@
-from src.camera import Camera
 from src.user_interface.message_ui import MessageUI
 from src.user_interface.tile_ui import TileUI
 from src.ecs.processors import MessageProcessor, RenderProcessor

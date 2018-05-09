@@ -1,7 +1,6 @@
 import tdl
 import itertools
 from src.consts import *
-from src.camera import Camera
 
 
 class TileUI:
