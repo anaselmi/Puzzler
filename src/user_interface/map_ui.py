@@ -4,7 +4,7 @@ from src.ecs.ui import UI
 from src.consts import *
 
 
-class TileUI(UI):
+class MapUI(UI):
     def __init__(self, console, size, destination):
         fg = P_L_GREEN
         bg = BLACK

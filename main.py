@@ -9,19 +9,19 @@ from src.consts import *
 
 
 class Engine:
-    def __init__(self, screen_size=SCREEN_SIZE, font=FONT_PATH, title=GAME_TITLE):
-        self.screen_width, self.screen_height = screen_size
+    def __init__(self, size=SCREEN_SIZE, font=FONT_PATH, title=GAME_TITLE):
+        self.width, self.height = size
         self.font = font
         self.title = title
         tdl.set_font(font, greyscale=True, altLayout=True)
-        self.root = tdl.init(self.screen_width, self.screen_height, title=self.title, fullscreen=True)
-        self.console = tdl.Console(self.screen_width, self.screen_height)
+        self.root = tdl.init(self.width, self.height, title=self.title, fullscreen=True)
+        self.console = tdl.Console(self.width, self.height)
 
     def create_action_dispatcher(self):
         self.action_dispatcher = ActionDispatcher(self, [])
 
     def create_game_ui(self):
-        self.game_ui = UIManager(self, (self.screen_width, self.screen_height))
+        self.game_ui = UIManager(self, (self.width, self.height))
         self.action_dispatcher.subscribers.append(self.game_ui)
 
     def create_world(self, size):

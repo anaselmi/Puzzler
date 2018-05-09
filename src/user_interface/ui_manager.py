@@ -1,33 +1,33 @@
 from src.user_interface.message_ui import MessageUI
-from src.user_interface.tile_ui import TileUI
+from src.user_interface.map_ui import MapUI
 from src.ecs.processors import MessageProcessor, RenderProcessor
 
 
 class UIManager:
-    def __init__(self, engine, screen_size):
+    def __init__(self, engine, size):
         self.engine = engine
         self.console = self.engine.console
-        self.screen_width, self.screen_height = screen_size
+        self.width, self.height = size
         self.windows = []
-        message_ui_height = int(self.screen_height / 5)
-        tile_ui_height = self.screen_height - message_ui_height
-        self._create_tile_ui(size=(None, tile_ui_height), destination=(0, 0))
-        self._create_message_ui(size=(None, None), destination=(0, tile_ui_height))
+        message_ui_height = int(self.height / 5)
+        map_ui_height = self.height - message_ui_height
+        self._create_map_ui(size=(None, map_ui_height), destination=(0, 0))
+        self._create_message_ui(size=(None, None), destination=(0, map_ui_height))
 
     def _create_message_ui(self, size, destination):
         self.message_ui = MessageUI(self.console, size=size, destination=destination)
         self.windows.append(self.message_ui)
 
-    def _create_tile_ui(self, size, destination):
-        self.tile_ui = TileUI(self.console, size=size, destination=destination)
-        self.windows.append(self.tile_ui)
+    def _create_map_ui(self, size, destination):
+        self.map_ui = MapUI(self.console, size=size, destination=destination)
+        self.windows.append(self.map_ui)
 
     def handle(self, action):
         pass
 
     def draw(self):
         self._update_message_ui()
-        self._update_tile_ui()
+        self._update_map_ui()
         self._draw_to_console()
 
     def _draw_to_console(self):
@@ -43,10 +43,10 @@ class UIManager:
         messages = message_processor.get_messages()
         self.message_ui.update(messages)
 
-    def _update_tile_ui(self):
+    def _update_map_ui(self):
         render_processor = self.engine.world.get_processor(RenderProcessor)
-        tile_ui_size = self.tile_ui.window.get_size()
-        tiles = self._reset_tiles(tile_ui_size)
+        map_ui_size = self.map_ui.window.get_size()
+        tiles = self._reset_tiles(map_ui_size)
         entities = render_processor.get_entities()
         for ent, (rend_component, pos_component) in entities:
             pos = pos_component.x, pos_component.y
@@ -64,7 +64,7 @@ class UIManager:
             bg = rend_component.bg
             tile["bg"] = bg
 
-        self.tile_ui.update(tiles)
+        self.map_ui.update(tiles)
 
     @staticmethod
     def _reset_tiles(tile_size):
