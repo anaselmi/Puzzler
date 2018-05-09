@@ -1,5 +1,6 @@
 import esper
 from itertools import chain
+from src.consts import *
 from src.ecs.components import *
 
 
@@ -87,32 +88,43 @@ class ActionProcessor(esper.Processor):
             if action == "MOVE_NORTH":
                 vel.dy -= 1
                 direction = "north."
+                color = WHITE
             elif action == "MOVE_SOUTH":
                 vel.dy += 1
                 direction = "south."
+                color = WHITE
             elif action == "MOVE_EAST":
                 vel.dx += 1
                 direction = "east."
+                color = WHITE
             elif action == "MOVE_WEST":
                 vel.dx -= 1
                 direction = "west."
+                color = WHITE
             elif action == "MOVE_NORTHWEST":
                 vel.dy -= 1
                 vel.dx -= 1
                 direction = "northwest."
+                color = GREEN
             elif action == "MOVE_SOUTHWEST":
                 vel.dy += 1
                 vel.dx -= 1
                 direction = "southwest."
+                color = GREEN
             elif action == "MOVE_NORTHEAST":
                 vel.dy -= 1
                 vel.dx += 1
                 direction = "northeast."
+                color = GREEN
             elif action == "MOVE_SOUTHEAST":
                 vel.dy += 1
                 vel.dx += 1
                 direction = "southeast."
-            message = "You moved " + direction
+                color = GREEN
+            else:
+                raise RuntimeError
+            text = "You moved " + direction
+            message = (text, color)
             self.world.add_message(entity, message)
 
 

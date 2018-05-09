@@ -1,45 +1,63 @@
-from src.camera import Camera
+import tdl
+from src.action_dispatcher import ActionDispatcher
 from src.user_interface.message_ui import MessageUI
 from src.user_interface.tile_ui import TileUI
-from src.ecs.processors import MessageProcessor, RenderProcessor
-from src.consts import *
 
 
 class UIManager:
-    def __init__(self, engine, screen_size):
+    def __init__(self, engine, size):
+        self.action_dispatcher = ActionDispatcher([])
+        self.uis = []
+
         self.engine = engine
-        self.console = self.engine.console
-        self.screen_width, self.screen_height = screen_size
-        assert(isinstance(self.screen_width, int))
-        assert (isinstance(self.screen_height, int))
-        self.windows = []
-        message_ui_height = int(self.screen_height / 5)
-        tile_ui_height = int(self.screen_height - message_ui_height)
-        self._create_tile_ui(size=(None, tile_ui_height), destination=(0, 0))
-        self._create_message_ui(size=(None, None), destination=(0, tile_ui_height))
+        self.width, self.height = self.size = size
 
-    def _create_message_ui(self, size, destination):
-        self.message_ui = MessageUI(self, self.console, size=size, destination=destination)
-        self.windows.append(self.message_ui)
+        self.console = tdl.Console(self.width, self.height)
 
-    def _create_tile_ui(self, size, destination):
-        self.tile_ui = TileUI(self, self.console, size=size, destination=destination)
-        self.windows.append(self.tile_ui)
+    def handle(self, action, world):
+        # TODO Add an action dispatcher
+        for ui in self.uis:
+            ui.handle(action, world)
+
+    def update(self, world_updated):
+        for ui in self.uis:
+            if world_updated:
+                ui.parse_world()
+            ui.update()
+
+    def draw(self):
+        for ui in self.uis:
+            if ui.redraw:
+                ui.clear()
+                ui.draw()
+            ui_con = ui.console
+            x, y = ui.destination
+            width, height = ui.size
+            self.console.blit(source=ui_con, x=x, y=y, width=width, height=height)
+
+    def clear(self):
+        self.console.clear()
+        for ui in self.uis:
+            ui.redraw = False
+
+    def blit(self, console):
+        console.blit(self.console)
+
+    # Will be deleted soon, along with all references to names of UIs and the camera
+    def create_game_ui(self):
+        message_ui_height = int(self.height / 5)
+        tile_ui_height = int(self.height - message_ui_height)
+        self._create_tile_ui(size=(self.width, tile_ui_height), destination=(0, 0))
+        self._create_message_ui(size=self.size, destination=(0, tile_ui_height))
+        self.action_dispatcher.subscribers = self.uis
 
     def create_camera(self, world_size):
         self.tile_ui.create_camera(world_size=world_size)
 
-    def handle(self, action):
-        pass
+    def _create_message_ui(self, size, destination):
+        self.message_ui = MessageUI(self, size=size, destination=destination)
+        self.uis.append(self.message_ui)
 
-    def update(self):
-        for window in self.windows:
-            window.update()
-
-    def draw(self):
-        for window in self.windows:
-            window.draw()
-
-    def clear(self):
-        for window in self.windows:
-            window.clear()
+    def _create_tile_ui(self, size, destination):
+        self.tile_ui = TileUI(self, size=size, destination=destination)
+        self.uis.append(self.tile_ui)

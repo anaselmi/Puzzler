@@ -1,32 +1,45 @@
 import tdl
-import src.ecs.processors as pro
+
 import src.ecs.components as comp
-from src.world_manager import WorldManager
-from src.user_interface.ui_manager import UIManager
-from src.input_handler import InputHandler
+import src.ecs.processors as pro
 from src.action_dispatcher import ActionDispatcher
 from src.consts import *
+from src.ecs.world_manager import WorldManager
+from src.input_handler import InputHandler
+from src.user_interface.ui_manager import UIManager
 
 
 class Engine:
     def __init__(self, screen_size=SCREEN_SIZE, font=FONT_PATH, title=GAME_TITLE):
-        self.screen_width, self.screen_height = screen_size
+        self.screen_width, self.screen_height = self.screen_size = screen_size
+        assert (isinstance(self.screen_width, int))
+        assert (isinstance(self.screen_height, int))
         self.font = font
         self.title = title
         tdl.set_font(font, greyscale=True, altLayout=True)
         self.root = tdl.init(self.screen_width, self.screen_height, title=self.title, fullscreen=True)
-        self.console = tdl.Console(self.screen_width, self.screen_height)
+
+    def create_game(self):
+        self.create_ui()
+        self.create_game_ui()
+        self.create_world(SCREEN_SIZE)
+        self.create_processors()
+        self.create_player()
+        self.create_camera()
 
     def create_action_dispatcher(self):
         self.action_dispatcher = ActionDispatcher(self, [])
 
+    def create_ui(self):
+        self.ui = UIManager(self, (self.screen_width, self.screen_height))
+        self.action_dispatcher.subscribers.append(self.ui)
+
     def create_game_ui(self):
-        self.game_ui = UIManager(self, (self.screen_width, self.screen_height))
-        self.action_dispatcher.subscribers.append(self.game_ui)
+        self.ui.create_game_ui()
 
     def create_world(self, size):
-        assert(isinstance(size[0], int))
-        assert(isinstance(size[1], int))
+        assert (isinstance(size[0], int))
+        assert (isinstance(size[1], int))
         self.world = WorldManager(engine, size)
         self.action_dispatcher.subscribers.append(self.world)
         self.create_processors()
@@ -69,47 +82,44 @@ class Engine:
 
     def create_camera(self):
         world_size = self.world.width, self.world.height
-        self.game_ui.create_camera(world_size)
+        self.ui.create_camera(world_size)
 
     def loop(self):
-        self.world.update()
-        self.game_ui.update()
-        self.game_ui.draw()
-        self.root.blit(self.console)
-        self.game_ui.clear()
-        tdl.flush()
-        self.running = True
-        while self.running and not tdl.event.is_window_closed():
-            # Updating and drawing to screen
-            self.game_ui.draw()
-            self.root.blit(self.console)
-            self.game_ui.clear()
+        updated = self.world.update()
+        self.ui.update(updated)
+        running = True
+
+        while running and not tdl.event.is_window_closed():
+            # Updating and drawing to screen:
+            # Redraws ui elements that have updated
+            # Blits all ui elements to the ui
+            self.ui.draw()
+            self.ui.blit(self.root)
             tdl.flush()
-            # Input handling
+            # Sets all ui elements redraw flag to False
+            self.ui.clear()
+
+            # Input handling:
             inputs = list(tdl.event.get())
+            # Reversed to allow newer inputs to have priority
             inputs.reverse()
             for _input in inputs:
-                action = InputHandler.handle(_input)
-                if action is not None:
+                player_input = InputHandler.handle(_input)
+                if player_input is not None:
                     break
             else:
-                action = None
-            if action == "QUIT_GAME":
-                self.running = False
-            # Action handling
-            self.action_dispatcher(action)
-            self.world.update()
-            self.game_ui.update()
+                player_input = None
+
+            if player_input == "QUIT_GAME":
+                running = False
+            # Action handling:
+            player_input = self.ui.handle(player_input, self.world)
+            updated = self.world.update(player_input)
+            self.ui.update(updated)
 
 if __name__ == "__main__":
     engine = Engine()
-    # Run these methods in this order or things will crash
-    engine.create_action_dispatcher()
-    engine.create_game_ui()
-    engine.create_world(SCREEN_SIZE)
-    engine.create_processors()
-    engine.create_player()
-    engine.create_camera()
+    engine.create_game()
     engine.loop()
 
 

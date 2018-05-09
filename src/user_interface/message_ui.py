@@ -1,39 +1,56 @@
 import tdl
 import itertools
-from src.ecs.processors import MessageProcessor
+from src.user_interface.ui import UI
 from src.consts import *
 
 
-class MessageUI:
-    def __init__(self, manager, console, size, destination=(0, 0), fg=D_GREY, bg=BLACK):
+class MessageUI(UI):
+    def __init__(self, manager, size, destination=(0, 0)):
+        super().__init__()
+        self.fg = D_GREY
+        self.bg = BLACK
         self.frame_color = WHITE
         self.frame_char = "."
-        self.manager = manager
-        self.console = console
-        width, height = size
-        self.x, self.y = destination
-        self.fg = fg
-        self.bg = bg
-        self.window = tdl.Window(self.console, self.x, self.y, width, height)
-        self.width, self.height = self.window.get_size()
-        self.window.set_colors(fg=self.fg, bg=self.bg)
         self.messages = []
+
+        self.manager = manager
+        self.width, self.height = self.size = size
+        self.x, self.y = self.destination = destination
+
+        self.console = tdl.Console(self.width, self.height)
+        self.console.set_colors(fg=self.fg, bg=self.bg)
+
+    def handle(self, action, world):
+        pass
+
+    def parse_world(self, world):
+        messages = world.send_messages()
+        if messages:
+            self.add_messages(messages)
+            self.redraw = True
 
     def draw(self):
         self._fill()
         self._draw_frame()
         assert(len(self.messages) < self.height)
-        for i, text in enumerate(self.messages):
+        for i, message in enumerate(self.messages):
+            if isinstance(message, str):
+                text = message
+                color = self.fg
+            else:
+                assert(isinstance(message, tuple))
+                assert(len(message) == 2)
+                text = message[0]
+                color = message[1]
             # Add 1 to i to make sure we don't draw onto the frame
-            self.window.draw_str(1, i+1, text)
+            self.console.draw_str(1, i + 1, text, fg=color)
 
     def process(self, action):
         pass
 
     def update(self):
-        message_processor = self.manager.engine.world.get_processor(MessageProcessor)
-        messages = message_processor.get_messages()
-        self.add_messages(messages)
+        if self.redraw:
+            pass
 
     def add_messages(self, messages):
         self.messages = list(itertools.chain(self.messages, messages))
@@ -44,13 +61,13 @@ class MessageUI:
             del self.messages[0]
 
     def _draw_frame(self):
-        self.window.draw_frame(0, 0, None, None, "?", fg=M_GREY, bg=BLACK)
+        self.console.draw_frame(0, 0, None, None, "?", fg=M_GREY, bg=BLACK)
 
     def _fill(self):
-        self.window.draw_rect(0, 0, width=None, height=None, string=None, bg=self.bg)
+        self.console.draw_rect(0, 0, width=None, height=None, string=None, bg=self.bg)
 
     def clear(self):
-        self.window.clear(fg=self.fg, bg=self.bg)
+        self.console.clear(fg=self.fg, bg=self.bg)
 
     def reset(self):
         self.clear()
