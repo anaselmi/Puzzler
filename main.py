@@ -66,10 +66,6 @@ class Engine:
         for component in components:
             self.world.add_component(player, component)
 
-    def create_camera(self):
-        world_size = self.world.width, self.world.height
-        self.game_ui.create_camera(world_size)
-
     def loop(self):
         self.action_dispatcher(None)
         self.running = True
@@ -94,7 +90,6 @@ if __name__ == "__main__":
     engine.create_world(SCREEN_SIZE)
     engine.create_processors()
     engine.create_player()
-    engine.create_camera()
     engine.loop()
 
 

@@ -20,7 +20,6 @@ class TileUI:
         self.tiles = None
 
     def draw(self):
-        camera = self.manager.camera
         self._fill()
         for unadjusted_y, row in enumerate(self.tiles):
             for unadjusted_x, tile in enumerate(row):

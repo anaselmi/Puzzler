@@ -22,10 +22,6 @@ class UIManager:
         self.tile_ui = TileUI(self, self.console, size=size, destination=destination)
         self.windows.append(self.tile_ui)
 
-    def create_camera(self, world_size):
-        tile_ui_size = self.tile_ui.window.get_size()
-        self.camera = Camera(screen_size=tile_ui_size, world_size=world_size)
-
     def handle(self, action):
         pass
 
@@ -49,15 +45,11 @@ class UIManager:
 
     def _update_tile_ui(self):
         render_processor = self.engine.world.get_processor(RenderProcessor)
-        center = render_processor.get_center()
-        self.camera.set_top_left_from_center(center=center)
-
         tile_ui_size = self.tile_ui.window.get_size()
         tiles = self._reset_tiles(tile_ui_size)
         entities = render_processor.get_entities()
         for ent, (rend_component, pos_component) in entities:
-            world_pos = pos_component.x, pos_component.y
-            pos = self.camera.adjust_to_screen(world_pos)
+            pos = pos_component.x, pos_component.y
             if pos is None:
                 continue
             x, y = pos
