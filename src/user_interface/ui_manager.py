@@ -10,8 +10,9 @@ class UIManager:
         self.screen_width, self.screen_height = screen_size
         self.windows = []
         message_ui_height = int(self.screen_height / 5)
-        self._create_message_ui(size=(None, message_ui_height), destination=(0, 0))
-        self._create_tile_ui(size=(None, None), destination=(0, message_ui_height))
+        tile_ui_height = self.screen_height - message_ui_height
+        self._create_tile_ui(size=(None, tile_ui_height), destination=(0, 0))
+        self._create_message_ui(size=(None, None), destination=(0, tile_ui_height))
 
     def _create_message_ui(self, size, destination):
         self.message_ui = MessageUI(self, self.console, size=size, destination=destination)

@@ -48,6 +48,8 @@ class MessageProcessor(esper.Processor):
         return messages
 
 
+# This processor should only be responsible for updating
+# position based on velocity, it shouldn't have to care about whether the move is even possible
 class VelocityProcessor(esper.Processor):
     def __init__(self):
         super().__init__()
@@ -63,7 +65,8 @@ class VelocityProcessor(esper.Processor):
             vel.dy = 0
 
 
-
+# For now this processor essentially parses actions and modifies components
+# but it should eventually create the most logical event based on the action and gamestate
 class ActionProcessor(esper.Processor):
     def __init__(self):
         super().__init__()
@@ -102,8 +105,14 @@ class ActionProcessor(esper.Processor):
             print(vel.dx, vel.dy)
 
 
-# SPAGHETTI
-class TurnProcessor(esper.Processor):
+# Vocabulary:
+# Tick: The smallest possible unit of time, every event takes a certain amount of ticks to happen.
+# Every tick, entities
+# Turn: 100 ticks. Repeating events are often measured in turns instead of ticks, and every turn,
+# some of these events might fire.
+# Energy: An int representing how many ticks an entity has collected, has a cap unique to that entity.
+# Speed: A number that represents how much energy an entity gains each tick.
+class TickProcessor(esper.Processor):
     def __init__(self, ticks_per_turn=100, tick_threshold=0, minimum_ticks=1):
         super().__init__()
         self.ticks_per_turn = ticks_per_turn
@@ -113,10 +122,10 @@ class TurnProcessor(esper.Processor):
         self.turn = 0
 
     def process(self):
-        active_entity, active_turn_component = self.get_active()
+        pass
 
     def get_active(self):
-        entities = list(self.world.get_component(TurnTaking))
+        entities = list(self.world.get_component(Ticking))
         while True:
             entities.sort(key=lambda x: x[1].energy, reverse=True)
             highest_tick_component = entities[0][1]
@@ -138,34 +147,14 @@ class TurnProcessor(esper.Processor):
         active_entity_component.active = True
         return active_entity, active_entity_component
 
-    def set_active(self):
-        entities = self.world.get_component(TurnTaking)
-        while True:
-            entities.sort(key=lambda x: x[1].energy, reverse=True)
-            highest_ticks_component = entities[0][1]
-            highest_tick_number = highest_ticks_component.ticks
-            if highest_tick_number < self.tick_threshold:
-                self.tick(self.minimum_ticks)
-                continue
-            break
-        tied_entities = list(filter(lambda ent: ent[1].ticks == highest_tick_number, entities))
-        tied_amount = len(tied_entities)
-        assert(tied_amount >= 1)
-        if tied_amount != 1:
-            # If we have more than one possible choice, we choose the one with the highest speed
-            tied_entities.sort(key=lambda x: x[1].speed, reverse=True)
-        self.reset_active()
-        active_entity_component = tied_entities[0][1]
-        active_entity_component.active = True
-
     def reset_active(self):
-        for ent, turn_taking in self.world.get_component(TurnTaking):
-            turn_taking.active = False
+        for ent, tick in self.world.get_component(Ticking):
+            tick.active = False
 
     def tick(self, tick_amount):
         self.ticks += tick_amount
         self.turn = self.ticks / self.ticks_per_turn
-        for ent, turn_taking in self.world.get_component(TurnTaking):
-            speed = turn_taking.speed
+        for ent, tick in self.world.get_component(Ticking):
+            speed = tick.speed
             new_ticks = tick_amount * speed
-            turn_taking.ticks += new_ticks
+            tick.ticks += new_ticks

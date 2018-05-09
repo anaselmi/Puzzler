@@ -4,7 +4,7 @@ from src.consts import *
 
 
 class MessageUI:
-    def __init__(self, manager, console, size, destination=(0, 0), fg=BLUE, bg=BLACK):
+    def __init__(self, manager, console, size, destination=(0, 0), fg=D_GREY, bg=BLACK):
         self.frame_color = WHITE
         self.frame_char = "."
         self.manager = manager
@@ -19,8 +19,8 @@ class MessageUI:
         self.messages = []
 
     def draw(self):
-        self._draw_frame()
         self._fill()
+        self._draw_frame()
         assert(len(self.messages) < self.height)
         for i, text in enumerate(self.messages):
             # Add 1 to i to make sure we don't draw onto the frame
@@ -38,10 +38,10 @@ class MessageUI:
             del self.messages[0]
 
     def _draw_frame(self):
-        self.window.draw_frame(0, 0, None, None, ".", WHITE, BLACK)
+        self.window.draw_frame(0, 0, None, None, "?", fg=M_GREY, bg=BLACK)
 
     def _fill(self):
-        self.window.draw_rect(0, 0, None, None, None)
+        self.window.draw_rect(0, 0, width=None, height=None, string=None, bg=self.bg)
 
     def clear(self):
         self.window.clear(fg=self.fg, bg=self.bg)

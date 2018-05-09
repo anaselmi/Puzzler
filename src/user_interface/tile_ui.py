@@ -4,7 +4,7 @@ from src.consts import *
 
 
 class TileUI:
-    def __init__(self, manager, console, size, destination=(0, 0), fg=WHITE, bg=P_D_GREEN, default_char="."):
+    def __init__(self, manager, console, size, destination=(0, 0), fg=P_L_GREEN, bg=BLACK, default_char="."):
         self.manager = manager
         self.console = console
         width, height = size

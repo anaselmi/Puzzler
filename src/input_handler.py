@@ -3,8 +3,7 @@ class InputHandler:
     # Although these strings are written with player input in mind, they can
     # be parsed by any game element that requires user input
     @staticmethod
-    def process(_input):
-        # Key mappings with held down keys should be resolved before those without
+    def handle(_input):
         key = _input.keychar
         if key == 'ESCAPE':
             return "QUIT_GAME"
@@ -22,7 +21,7 @@ class InputHandler:
             return "MOVE_NORTHWEST"
         elif key == "KP1":
             return "MOVE_SOUTHWEST"
-        elif key == "KP1":
+        elif key == "KP9":
             return "MOVE_NORTHEAST"
         elif key == "KP3":
             return "MOVE_SOUTHEAST"
@@ -34,5 +33,5 @@ class InputHandler:
     # instantiate a new object, maybe hijack new if we really need this
     # functionality but for now its better to call process
     def __call__(self, _input):
-        return self.process(_input)
+        return self.handle(_input)
 
