@@ -83,7 +83,8 @@ class Engine:
             else:
                 action = {}
 
-            if action.get("EXIT"):
+            _exit = action.get("EXIT")
+            if _exit:
                 self.running = False
             # Action handling
             self.action_dispatcher(action)
