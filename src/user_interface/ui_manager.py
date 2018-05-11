@@ -25,14 +25,14 @@ class UIManager:
     def handle(self, action):
         pass
 
-    def draw(self):
+    def render(self):
         self._update_message_ui()
         self._update_map_ui()
         self._draw_to_console()
 
     def _draw_to_console(self):
         for window in self.windows:
-            window.draw()
+            window.render()
 
     def clear(self):
         for window in self.windows:
@@ -41,7 +41,7 @@ class UIManager:
     def _update_message_ui(self):
         message_processor = self.engine.world.get_processor(MessageProcessor)
         messages = message_processor.get_messages()
-        self.message_ui.update(messages)
+        self.message_ui.update_messages(messages)
 
     def _update_map_ui(self):
         render_processor = self.engine.world.get_processor(RenderProcessor)
@@ -64,7 +64,7 @@ class UIManager:
             bg = rend_component.bg
             tile["bg"] = bg
 
-        self.map_ui.update(tiles)
+        self.map_ui.update_tiles(tiles)
 
     @staticmethod
     def _reset_tiles(tile_size):

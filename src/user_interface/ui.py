@@ -11,3 +11,15 @@ class UI(abc.ABC):
         self.width, self.height = self.window.get_size()
         self.fg, self.bg = fg, bg
         self.window.set_colors(fg=self.fg, bg=self.bg)
+
+    @abc.abstractmethod
+    def update(self):
+        pass
+
+    @abc.abstractmethod
+    def draw(self):
+        pass
+
+    @abc.abstractmethod
+    def render(self):
+        pass

@@ -3,8 +3,8 @@ import src.ecs.processors as pro
 import src.ecs.components as comp
 from src.world_manager import WorldManager
 from src.user_interface.ui_manager import UIManager
+from src.state import StateStack
 from src.input_handler import InputHandler
-from src.action_dispatcher import ActionDispatcher
 from src.consts import *
 
 
@@ -17,17 +17,22 @@ class Engine:
         self.root = tdl.init(self.width, self.height, title=self.title, fullscreen=True)
         self.console = tdl.Console(self.width, self.height)
 
-    def create_action_dispatcher(self):
-        self.action_dispatcher = ActionDispatcher(self, [])
+    def create_all(self):
+        self.create_state_stack()
+        self.create_game_ui()
+        self.create_world(SCREEN_SIZE)
+        self.create_processors()
+        self.create_player()
+
+    def create_state_stack(self):
+        self.state_stack = StateStack()
 
     def create_game_ui(self):
         self.game_ui = UIManager(self, (self.width, self.height))
-        self.action_dispatcher.subscribers.append(self.game_ui)
+        self.state_stack.stack.append(self.game_ui)
 
     def create_world(self, size):
         self.world = WorldManager(engine, size)
-        self.action_dispatcher.subscribers.append(self.world)
-        self.create_processors()
 
     def create_processors(self):
         processors = []
@@ -67,14 +72,14 @@ class Engine:
             self.world.add_component(player, component)
 
     def loop(self):
-        self.action_dispatcher(None)
-        self.running = True
-        while self.running and not tdl.event.is_window_closed():
+        running = True
+        while running and not tdl.event.is_window_closed():
             # Updating and drawing to screen
-            self.game_ui.draw()
+            self.game_ui.render()
             self.root.blit(self.console)
             self.game_ui.clear()
             tdl.flush()
+
             # Input handling
             _inputs = list(tdl.event.get())
             for _input in _inputs:
@@ -83,22 +88,18 @@ class Engine:
             else:
                 action = {}
 
+            print(action)
             _exit = action.get("EXIT")
             if _exit:
-                self.running = False
+                running = False
+
             # Action handling
-            self.action_dispatcher(action)
-            # Runs the world until game reaches a point where input is required
-            self.world.update()
+            action = self.state_stack.handle(action)
+            self.world.update(action)
 
 if __name__ == "__main__":
     engine = Engine()
-    # Run these methods in this order or things will crash
-    engine.create_action_dispatcher()
-    engine.create_game_ui()
-    engine.create_world(SCREEN_SIZE)
-    engine.create_processors()
-    engine.create_player()
+    engine.create_all()
     engine.loop()
 
 

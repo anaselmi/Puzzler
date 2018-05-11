@@ -1,7 +1,5 @@
-import tdl
-import itertools
-from src.ecs.ui import UI
 from src.consts import *
+from src.user_interface.ui import UI
 
 
 class MapUI(UI):
@@ -12,6 +10,9 @@ class MapUI(UI):
 
         self.default_char = "."
         self.tiles = None
+
+    def render(self):
+        self.draw()
 
     def draw(self):
         self._fill()
@@ -24,10 +25,13 @@ class MapUI(UI):
                 char = tile.get("char", self.default_char)
                 self.window.draw_char(x, y, char=char, fg=fg, bg=bg)
 
-    def process(self, action):
+    def handle(self, action):
         pass
 
-    def update(self, tiles):
+    def update(self):
+        pass
+
+    def update_tiles(self, tiles):
         self.tiles = tiles
 
     def _fill(self):

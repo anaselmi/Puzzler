@@ -1,7 +1,7 @@
-import tdl
 import itertools
-from src.ecs.ui import UI
+
 from src.consts import *
+from src.user_interface.ui import UI
 
 
 class MessageUI(UI):
@@ -14,18 +14,21 @@ class MessageUI(UI):
         self.frame_char = "."
         self.messages = []
 
+    def render(self):
+        self.draw()
+
     def draw(self):
         self._fill()
         self._draw_frame()
         assert(len(self.messages) < self.height)
         for i, text in enumerate(self.messages):
-            # Add 1 to i to make sure we don't draw onto the frame
+            # Add 1 to i to make sure we don't render onto the frame
             self.window.draw_str(1, i+1, text)
 
-    def process(self, action):
+    def update(self):
         pass
 
-    def update(self, messages):
+    def update_messages(self, messages):
         self.messages = list(itertools.chain(self.messages, messages))
         self._delete_old_messages()
 
