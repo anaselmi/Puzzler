@@ -1,11 +1,12 @@
 import tdl
-from src.user_interface.message_element import MessageElement
-from src.user_interface.map_element import MapElement
+
 from src.ecs.processors import MessageProcessor, RenderProcessor
+from src.user_interface.elements.map_element import MapElement
+from src.user_interface.elements.message_element import MessageElement
 
 
 # TODO: Rename ui windows to elements
-class UIManager:
+class PlayUI:
     def __init__(self, engine, size):
         self.engine = engine
         self.width, self.height = size
@@ -24,18 +25,15 @@ class UIManager:
         self.map_ui = MapElement(self.console, size=size, destination=destination)
         self.windows.append(self.map_ui)
 
-    def handle(self, action):
-        pass
+    def render(self, console):
+        self.draw()
+        console.blit(self.console)
 
-    def render(self):
-        self._update_message_element()
-        self._update_map_element()
-        self._draw_to_console()
+    def update(self, action, world):
+        self._update_message_element(world)
+        self._update_map_element(world)
 
-    def update(self):
-        pass
-
-    def _draw_to_console(self):
+    def draw(self):
         for window in self.windows:
             window.render()
 
@@ -43,13 +41,13 @@ class UIManager:
         for window in self.windows:
             window.clear()
 
-    def _update_message_element(self):
-        message_processor = self.engine.world.get_processor(MessageProcessor)
+    def _update_message_element(self, world):
+        message_processor = world.get_processor(MessageProcessor)
         messages = message_processor.get_messages()
         self.message_ui.update_messages(messages)
 
-    def _update_map_element(self):
-        render_processor = self.engine.world.get_processor(RenderProcessor)
+    def _update_map_element(self, world):
+        render_processor = world.get_processor(RenderProcessor)
         map_ui_size = self.map_ui.window.get_size()
         tiles = self._reset_tiles(map_ui_size)
         entities = render_processor.get_entities()

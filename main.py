@@ -1,11 +1,13 @@
 import tdl
-import src.ecs.processors as pro
+
 import src.ecs.components as comp
-from src.world_manager import WorldManager
-from src.user_interface.ui_manager import UIManager
-from src.state.state_stack import StateStack
-from src.input_handling import InputHandler
+import src.ecs.processors as pro
 from src.consts import *
+from src.input_handling import InputHandler
+from src.state.state_stack import StateStack
+from src.state.states.play_state import PlayState
+from src.user_interface.play_ui import PlayUI
+from src.world_manager import WorldManager
 
 
 class Engine:
@@ -23,13 +25,13 @@ class Engine:
         self.create_world(SCREEN_SIZE)
         self.create_processors()
         self.create_player()
+        self.create_play_state()
 
     def create_state_stack(self):
         self.state_stack = StateStack()
 
     def create_game_ui(self):
-        self.game_ui = UIManager(self, (self.width, self.height))
-        self.state_stack.stack.append(self.game_ui)
+        self.game_ui = PlayUI(self, (self.width, self.height))
 
     def create_world(self, size):
         self.world = WorldManager(engine, size)
@@ -71,6 +73,10 @@ class Engine:
         for component in components:
             self.world.add_component(player, component)
 
+    def create_play_state(self):
+        play_state = PlayState(ui=self.game_ui, world=self.world)
+        self.state_stack.push(play_state)
+
     def loop(self):
         running = True
         while running and not tdl.event.is_window_closed():
@@ -78,9 +84,10 @@ class Engine:
             self.state_stack.render(self.console)
             self.root.blit(self.console)
             tdl.flush()
-            self.game_ui.clear()
+            self.state_stack.clear()
 
             # Input handling
+            # TODO: Make this better
             _inputs = list(tdl.event.get())
             for _input in _inputs:
                 action = InputHandler.handle(_input)
@@ -88,13 +95,12 @@ class Engine:
             else:
                 action = {}
 
+            action = self.state_stack.update(action)
+
             _exit = action.get("EXIT")
             if _exit:
                 running = False
 
-            # Action handling
-            action = self.state_stack.handle(action)
-            self.world.update(action)
 
 if __name__ == "__main__":
     engine = Engine()

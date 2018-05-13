@@ -17,7 +17,7 @@ class StateStack:
         state.exit()
         return state
 
-    def clear(self):
+    def reset_stack(self):
         old_states = self.states
         self.states = []
         return old_states
@@ -26,9 +26,13 @@ class StateStack:
         for state in reversed(self.stack):
             state.render(console)
 
+    def clear(self):
+        for state in reversed(self.stack):
+            state.clear()
+
     # Only the state at the top of the stack can receive input
-    def handle(self, action, **kwargs):
-        result = self.stack[-1].handle(action, **kwargs)
+    def update(self, action):
+        result = self.stack[-1].update(action)
         action = update_action(action, result)
         return action
 

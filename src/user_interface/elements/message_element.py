@@ -1,7 +1,7 @@
 import itertools
 
 from src.consts import *
-from src.user_interface.element_abc import ElementABC
+from src.user_interface.elements.element_abc import ElementABC
 
 
 class MessageElement(ElementABC):
