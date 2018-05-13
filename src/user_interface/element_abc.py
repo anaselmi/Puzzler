@@ -2,7 +2,7 @@ import abc
 import tdl
 
 
-class UI(abc.ABC):
+class ElementABC(abc.ABC):
     def __init__(self, console, size, destination, fg, bg):
         self.console = console
         width, height = size

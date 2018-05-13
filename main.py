@@ -3,8 +3,8 @@ import src.ecs.processors as pro
 import src.ecs.components as comp
 from src.world_manager import WorldManager
 from src.user_interface.ui_manager import UIManager
-from src.state import StateStack
-from src.input_handler import InputHandler
+from src.state.state_stack import StateStack
+from src.input_handling import InputHandler
 from src.consts import *
 
 
@@ -75,10 +75,10 @@ class Engine:
         running = True
         while running and not tdl.event.is_window_closed():
             # Updating and drawing to screen
-            self.game_ui.render()
+            self.state_stack.render(self.console)
             self.root.blit(self.console)
-            self.game_ui.clear()
             tdl.flush()
+            self.game_ui.clear()
 
             # Input handling
             _inputs = list(tdl.event.get())
@@ -88,7 +88,6 @@ class Engine:
             else:
                 action = {}
 
-            print(action)
             _exit = action.get("EXIT")
             if _exit:
                 running = False

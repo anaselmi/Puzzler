@@ -1,8 +1,8 @@
 from src.consts import *
-from src.user_interface.ui import UI
+from src.user_interface.element_abc import ElementABC
 
 
-class MapUI(UI):
+class MapElement(ElementABC):
     def __init__(self, console, size, destination):
         fg = P_L_GREEN
         bg = BLACK

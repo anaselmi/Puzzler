@@ -38,3 +38,16 @@ class InputHandler:
     def __call__(self, _input):
         return self.handle(_input)
 
+
+def update_action(action, result):
+    print(result)
+    # State did not consume action
+    if result == {} or result is None:
+        return action
+    # State consumed action
+    if result == action:
+        return None
+    # State generated new action
+    else:
+        return result
+
