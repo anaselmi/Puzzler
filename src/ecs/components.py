@@ -10,9 +10,10 @@ class Renderable:
         self.focus = focus
 
 
-class Playable:
+class Controllable:
     def __init__(self, is_player=True):
-            self.is_player = is_player
+        self.action = {}
+        self.is_player = is_player
 
 
 class Velocity:
@@ -41,9 +42,13 @@ class Messaging:
         self.messages = messages
 
 
+class Active:
+    def __init__(self):
+        self.ticks = 0
+
+
 class Ticking:
-    def __init__(self, speed=10, energy=0, energy_cap=200, active=False):
+    def __init__(self, speed=10, energy=0, energy_cap=200):
         self.speed = speed
         self.energy = energy
         self.energy_cap = energy_cap
-        self.active = active

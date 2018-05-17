@@ -1,16 +1,16 @@
-from src.input_handling import update_action
+from src.input_handling import update_command
 from src.state.states.state_abc import StateABC
 
 
 class PlayState(StateABC):
-    def __init__(self, ui, world):
+    def __init__(self, ui, level):
         self.ui = ui
-        self.world = world
+        self.level = level
 
         self.world_updated = True
 
     def enter(self):
-        self.ui.update(action={}, world=self.world)
+        self.ui.handle(command={}, level=self.level)
 
     def exit(self):
         pass
@@ -21,10 +21,12 @@ class PlayState(StateABC):
     def clear(self):
         self.ui.clear()
 
-    def update(self, action):
-        result = self.ui.update(action=action, world=self.world)
-        action = update_action(action, result)
-        paused = action.get("PAUSED")
-        print(paused)
+    def handle(self, command):
+        result = self.ui.handle(command=command, level=self.level)
+        command = update_command(command, result)
+        paused = command.get("paused")
         if not paused:
-            self.world.handle(action)
+            self.level.handle(command)
+
+    def update(self):
+        pass

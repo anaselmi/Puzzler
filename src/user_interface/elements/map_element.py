@@ -25,7 +25,7 @@ class MapElement(ElementABC):
                 char = tile.get("char", self.default_char)
                 self.window.draw_char(x, y, char=char, fg=fg, bg=bg)
 
-    def handle(self, action):
+    def handle(self, command):
         pass
 
     def update(self):

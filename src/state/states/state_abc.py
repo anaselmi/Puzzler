@@ -19,5 +19,9 @@ class StateABC(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def update(self, action):
+    def update(self):
+        pass
+
+    @abc.abstractmethod
+    def handle(self, command):
         pass

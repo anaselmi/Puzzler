@@ -7,8 +7,7 @@ from src.user_interface.elements.message_element import MessageElement
 
 # TODO: Rename ui windows to elements
 class PlayUI:
-    def __init__(self, engine, size):
-        self.engine = engine
+    def __init__(self, size):
         self.width, self.height = size
         self.console = tdl.Console(self.width, self.height)
         self.windows = []
@@ -29,9 +28,12 @@ class PlayUI:
         self.draw()
         console.blit(self.console)
 
-    def update(self, action, world):
-        self._update_message_element(world)
-        self._update_map_element(world)
+    def handle(self, command, level):
+        self._update_message_element(level)
+        self._update_map_element(level)
+
+    def update(self):
+        pass
 
     def draw(self):
         for window in self.windows:
@@ -41,13 +43,13 @@ class PlayUI:
         for window in self.windows:
             window.clear()
 
-    def _update_message_element(self, world):
-        message_processor = world.get_processor(MessageProcessor)
+    def _update_message_element(self, level):
+        message_processor = level.get_processor(MessageProcessor)
         messages = message_processor.get_messages()
         self.message_ui.update_messages(messages)
 
-    def _update_map_element(self, world):
-        render_processor = world.get_processor(RenderProcessor)
+    def _update_map_element(self, level):
+        render_processor = level.get_processor(RenderProcessor)
         map_ui_size = self.map_ui.window.get_size()
         tiles = self._reset_tiles(map_ui_size)
         entities = render_processor.get_entities()

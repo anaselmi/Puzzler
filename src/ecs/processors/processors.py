@@ -8,7 +8,7 @@ class RenderProcessor(esper.Processor):
     def __init__(self):
         super().__init__()
 
-    def process(self):
+    def process(self, kwargs):
         pass
 
     def get_entities(self):
@@ -18,7 +18,7 @@ class RenderProcessor(esper.Processor):
 
     def get_center(self):
         # List of all entities in the world that can be rendered and are the PC
-        players = [x for x in self.world.get_components(Playable, Renderable, Positionable) if x[1][0].is_player]
+        players = [x for x in self.world.get_components(Controllable, Renderable, Positionable) if x[1][0].is_player]
         if players:
             # Ensures we have one PC, as we always should
             if len(players) != 1:
@@ -34,7 +34,7 @@ class MessageProcessor(esper.Processor):
         self.messages = messages
 
     # Sends out a list of recent messages from all processes that sent them
-    def process(self):
+    def process(self, kwargs):
         for ent, mes in self.world.get_component(Messaging):
             self.add_messages(mes.messages)
             mes.messages = []
@@ -48,13 +48,12 @@ class MessageProcessor(esper.Processor):
         return messages
 
 
-# This processor should only be responsible for updating
-# position based on velocity, it shouldn't have to care about whether the move is even possible
+# This processor is only responsible for updating position based on velocity, not for checking validity
 class VelocityProcessor(esper.Processor):
     def __init__(self):
         super().__init__()
 
-    def process(self):
+    def process(self, kwargs):
         # Moves all entities with a velocity
         for ent, (pos, vel) in self.world.get_components(Positionable, Velocity):
             if vel.dx == 0 and vel.dy == 0:
@@ -66,53 +65,32 @@ class VelocityProcessor(esper.Processor):
 
 
 # For now this processor essentially parses actions and modifies components
-# but it should eventually create the most logical event based on the action and gamestate
-class ActionProcessor(esper.Processor):
+# but it should eventually create the most logical event based on the command and gamestate
+class MoveCommandProcessor(esper.Processor):
     def __init__(self):
         super().__init__()
 
-    def process(self):
-        pass
+    def process(self, kwargs):
+        command = kwargs.get("command", {})
+        for entity, (_, controllable) in self.world.get_components(Active, Controllable):
+            move = command.get("move")
+            if move and self.world.has_component(entity, Velocity):
+                vel = self.world.component_for_entity(entity, Velocity)
+                if move.startswith("north"):
+                    vel.dy -= 1
+                elif move.startswith("south"):
+                    vel.dy += 1
 
-    def handle(self, entity, action):
-        if action is None:
-            return
-        move = action.get("MOVE")
-        if move:
-            if not self.world.has_component(entity, Velocity):
-                print(entity)
-                return
-            vel = self.world.component_for_entity(entity, Velocity)
-            if move == "NORTH":
-                vel.dy -= 1
-            elif move == "SOUTH":
-                vel.dy += 1
-            elif move == "EAST":
-                vel.dx += 1
-            elif move == "WEST":
-                vel.dx -= 1
-            elif move == "NORTHWEST":
-                vel.dy -= 1
-                vel.dx -= 1
-            elif move == "SOUTHWEST":
-                vel.dy += 1
-                vel.dx -= 1
-            elif move == "NORTHEAST":
-                vel.dy -= 1
-                vel.dx += 1
-            elif move == "SOUTHEAST":
-                vel.dy += 1
-                vel.dx += 1
+                if move.endswith("east"):
+                    vel.dx += 1
+                elif move.endswith("west"):
+                    vel.dx -= 1
+
+    def _move(self, entity, direction):
 
 
-# Vocabulary:
-# Tick: The smallest possible unit of time, every event takes a certain amount of ticks to happen.
-# Every tick, entities
-# Turn: 100 ticks. Repeating events are often measured in turns instead of ticks, and every turn,
-# some of these events might fire.
-# Energy: An int representing how many ticks an entity has collected, has a cap unique to that entity.
-# Speed: A number that represents how much energy an entity gains each tick.
-class TickProcessor(esper.Processor):
+
+class ActivityProcessor(esper.Processor):
     def __init__(self, ticks_per_turn=100, tick_threshold=0, minimum_ticks=1):
         super().__init__()
         self.ticks_per_turn = ticks_per_turn
@@ -121,8 +99,14 @@ class TickProcessor(esper.Processor):
         self.ticks = 0
         self.turn = 0
 
-    def process(self):
-        pass
+    def process(self, kwargs):
+        active_entities = list(self.world.get_component(Active))
+        assert(len(active_entities) == 1)
+
+        active_component = active_entities[0][1]
+        time_passed = active_component.ticks
+        assert(isinstance(time_passed, int))
+        active_component.ticks = 0
 
     def get_active(self):
         entities = list(self.world.get_component(Ticking))
@@ -148,13 +132,13 @@ class TickProcessor(esper.Processor):
         return active_entity, active_entity_component
 
     def reset_active(self):
-        for ent, tick in self.world.get_component(Ticking):
-            tick.active = False
+        for ent, active in self.world.get_component(Active):
+            self.world.remove_component(ent, active)
 
-    def tick(self, tick_amount):
-        self.ticks += tick_amount
+    def tick(self, time_passed):
+        self.ticks += time_passed
         self.turn = self.ticks / self.ticks_per_turn
         for ent, tick in self.world.get_component(Ticking):
             speed = tick.speed
-            new_ticks = tick_amount * speed
+            new_ticks = time_passed * speed
             tick.ticks += new_ticks

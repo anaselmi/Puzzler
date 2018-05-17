@@ -1,44 +1,41 @@
 class InputHandler:
-    # Turns user input into strings that different game elements can parse
-    # Although these strings are written with player input in mind, they can
-    # be parsed by any game element that requires user input
     @staticmethod
     def handle(_input):
         _type = _input.type
         if _type == "KEYDOWN":
             key = _input.keychar
             if key == 'ESCAPE':
-                return {"EXIT": True}
+                return {"exit": True}
             if key == 'ENTER':
-                return {"RETURN": True}
+                return {"return": True}
             elif key == "UP" or key == "KP8":
-                return {"MOVE": "NORTH"}
+                return {"move": "north"}
             elif key == "DOWN" or key == "KP2":
-                return {"MOVE": "SOUTH"}
+                return {"move": "south"}
             elif key == "LEFT" or key == "KP4":
-                return {"MOVE": "WEST"}
+                return {"move": "west"}
             elif key == "RIGHT" or key == "KP6":
-                return {"MOVE": "EAST"}
+                return {"move": "east"}
             elif key == "KP7":
-                return {"MOVE": "NORTHWEST"}
+                return {"move": "northwest"}
             elif key == "KP1":
-                return {"MOVE": "SOUTHWEST"}
+                return {"move": "southwest"}
             elif key == "KP9":
-                return {"MOVE": "NORTHEAST"}
+                return {"move": "northeast"}
             elif key == "KP3":
-                return {"MOVE": "SOUTHEAST"}
+                return {"move": "southeast"}
 
             elif key == "l":
-                return {"LOOK": True}
+                return {"look": True}
         return {}
 
 
-def update_action(action, result):
+def update_command(command, result):
     # State did not consume action
     if result == {} or result is None:
-        return action
+        return command
     # State consumed action
-    if result == action:
+    if result == command:
         return {}
     # State generated new action
     else:

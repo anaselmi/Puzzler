@@ -1,4 +1,4 @@
-from src.input_handling import update_action
+from src.input_handling import update_command
 
 
 class StateStack:
@@ -31,8 +31,12 @@ class StateStack:
             state.clear()
 
     # Only the state at the top of the stack can receive input
-    def update(self, action):
-        result = self.stack[-1].update(action)
-        action = update_action(action, result)
-        return action
+    def handle(self, command):
+        result = self.stack[-1].handle(command)
+        command = update_command(command, result)
+        return command
+
+    def update(self):
+        for state in reversed(self.stack):
+            state.update()
 
