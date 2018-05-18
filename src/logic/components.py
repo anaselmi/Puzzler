@@ -11,9 +11,9 @@ class Renderable:
 
 
 class Controllable:
-    def __init__(self, is_player=True):
+    def __init__(self, player):
         self.action = {}
-        self.is_player = is_player
+        self.player = player
 
 
 class Velocity:
@@ -38,17 +38,13 @@ class Describable:
 
 
 class Messaging:
-    def __init__(self, messages):
+    def __init__(self, messages=None):
+        if messages is None:
+            messages = []
         self.messages = messages
 
 
-class Active:
-    def __init__(self):
-        self.ticks = 0
-
-
 class Ticking:
-    def __init__(self, speed=10, energy=0, energy_cap=200):
+    def __init__(self, speed=1, energy=0):
         self.speed = speed
         self.energy = energy
-        self.energy_cap = energy_cap

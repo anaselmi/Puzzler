@@ -1,6 +1,8 @@
-import esper
 from itertools import chain
-from src.ecs.components import *
+
+import esper
+
+from src.logic.components import *
 
 
 class RenderProcessor(esper.Processor):
@@ -8,7 +10,7 @@ class RenderProcessor(esper.Processor):
     def __init__(self):
         super().__init__()
 
-    def process(self, kwargs):
+    def process(self, event, context):
         pass
 
     def get_entities(self):
@@ -34,7 +36,7 @@ class MessageProcessor(esper.Processor):
         self.messages = messages
 
     # Sends out a list of recent messages from all processes that sent them
-    def process(self, kwargs):
+    def process(self, event, context):
         for ent, mes in self.world.get_component(Messaging):
             self.add_messages(mes.messages)
             mes.messages = []
@@ -53,7 +55,7 @@ class VelocityProcessor(esper.Processor):
     def __init__(self):
         super().__init__()
 
-    def process(self, kwargs):
+    def process(self, event, context):
         # Moves all entities with a velocity
         for ent, (pos, vel) in self.world.get_components(Positionable, Velocity):
             if vel.dx == 0 and vel.dy == 0:
@@ -66,11 +68,11 @@ class VelocityProcessor(esper.Processor):
 
 # For now this processor essentially parses actions and modifies components
 # but it should eventually create the most logical event based on the command and gamestate
-class MoveCommandProcessor(esper.Processor):
+class CommandProcessor(esper.Processor):
     def __init__(self):
         super().__init__()
 
-    def process(self, kwargs):
+    def process(self, event, context):
         command = kwargs.get("command", {})
         for entity, (_, controllable) in self.world.get_components(Active, Controllable):
             move = command.get("move")
@@ -87,10 +89,10 @@ class MoveCommandProcessor(esper.Processor):
                     vel.dx -= 1
 
     def _move(self, entity, direction):
+        pass
 
 
-
-class ActivityProcessor(esper.Processor):
+class TurnProcessor(esper.Processor):
     def __init__(self, ticks_per_turn=100, tick_threshold=0, minimum_ticks=1):
         super().__init__()
         self.ticks_per_turn = ticks_per_turn

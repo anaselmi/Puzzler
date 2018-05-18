@@ -1,13 +1,11 @@
 import tdl
 
-import src.ecs.components as comp
-import src.ecs.processors as pro
 from src.consts import *
 from src.input_handling import InputHandler
+from src.logic.level import Level
 from src.state.state_stack import StateStack
 from src.state.states.play_state import PlayState
 from src.user_interface.play_ui import PlayUI
-from src.level import Level
 
 
 class Engine:

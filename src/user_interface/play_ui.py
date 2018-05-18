@@ -1,6 +1,6 @@
 import tdl
 
-from src.ecs.processors import MessageProcessor, RenderProcessor
+from src.logic.processors import MessageProcessor, RenderProcessor
 from src.user_interface.elements.map_element import MapElement
 from src.user_interface.elements.message_element import MessageElement
 

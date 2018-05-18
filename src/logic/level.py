@@ -1,7 +1,8 @@
 from esper import World
+from src.logic.processors.processors import *
+
 from src.consts import *
-from src.ecs.processors import *
-from src.ecs.components import *
+from src.logic.components import *
 
 
 class Level(World):
@@ -14,6 +15,7 @@ class Level(World):
             for entity in self._dead_entities:
                 self.delete_entity(entity, immediate=True)
             self._dead_entities.clear()
+
         for processor in self._processors:
             processor.process(kwargs)
 
@@ -26,7 +28,7 @@ class Level(World):
     def create_processors(self):
         processors = []
 
-        message_processor = MessageProcessor(START_MESSAGE)
+        message_processor = MessageProcessor()
         processors.append(message_processor)
         render_processor = RenderProcessor()
         processors.append(render_processor)
@@ -34,8 +36,8 @@ class Level(World):
         processors.append(position_processor)
         action_processor = CommandProcessor()
         processors.append(action_processor)
-        act_processor = ActivityProcessor()
-        processors.append(act_processor)
+        turn_processor = TurnProcessor()
+        processors.append(turn_processor)
 
         for i, processor in enumerate(processors):
             self.add_processor(processor, priority=i)
@@ -49,12 +51,13 @@ class Level(World):
         components.append(player_render)
         player_description = Describable("Player", "You", "A young Inquisitor with a freshly sealed writ.")
         components.append(player_description)
-        player_controllable = Controllable()
+        player_controllable = Controllable(player=True)
         components.append(player_controllable)
         player_tick = Ticking()
         components.append(player_tick)
         player_vel = Velocity()
         components.append(player_vel)
+        player_mes = Messaging(START_MESSAGE)
 
         player = self.create_entity()
         for component in components:
