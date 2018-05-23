@@ -37,11 +37,15 @@ class Describable:
         self.description = description
 
 
-class Messaging:
-    def __init__(self, messages=None):
-        if messages is None:
-            messages = []
-        self.messages = messages
+class Logging:
+    def __init__(self, log=None):
+        if log is None:
+            log = []
+        self.log = log
+
+
+class Active:
+    pass
 
 
 class Ticking:

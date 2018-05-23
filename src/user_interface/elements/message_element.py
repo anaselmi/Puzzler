@@ -21,9 +21,11 @@ class MessageElement(ElementABC):
         self._fill()
         self._draw_frame()
         assert(len(self.messages) < self.height)
-        for i, text in enumerate(self.messages):
+        for i, message in enumerate(self.messages):
+            text = message.text
+            fg = message.color
             # Add 1 to i to make sure we don't render onto the frame
-            self.window.draw_str(1, i+1, text)
+            self.window.draw_str(1, i+1, text, fg)
 
     def update(self):
         pass

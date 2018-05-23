@@ -1,7 +1,7 @@
 import tdl
 
 from src.consts import *
-from src.input_handling import InputHandler
+from src.input_handling import InputHandler, update_command
 from src.logic.level import Level
 from src.state.state_stack import StateStack
 from src.state.states.play_state import PlayState
@@ -50,8 +50,9 @@ class Engine:
                 break
             else:
                 command = {}
+
             command = self.state_stack.handle(command)
-            _exit = command.get("EXIT")
+            _exit = command.get("exit")
             if _exit:
                 running = False
 

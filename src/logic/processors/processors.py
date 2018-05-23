@@ -1,16 +1,12 @@
+from esper import Processor
 from itertools import chain
-
 import esper
 
 from src.logic.components import *
 
 
-class RenderProcessor(esper.Processor):
-
-    def __init__(self):
-        super().__init__()
-
-    def process(self, event, context):
+class RenderProcessor(Processor):
+    def process(self, command):
         pass
 
     def get_entities(self):
@@ -30,32 +26,23 @@ class RenderProcessor(esper.Processor):
         raise RuntimeError
 
 
-class MessageProcessor(esper.Processor):
-    def __init__(self, messages):
-        super().__init__()
-        self.messages = messages
+class LoggingProcessor(Processor):
+    def process(self, command):
+        pass
 
-    # Sends out a list of recent messages from all processes that sent them
-    def process(self, event, context):
-        for ent, mes in self.world.get_component(Messaging):
-            self.add_messages(mes.messages)
-            mes.messages = []
-
-    def add_messages(self, messages):
-        self.messages = list(chain(self.messages, messages))
-
-    def get_messages(self):
-        messages = self.messages
-        self.messages = []
-        return messages
+    def receive(self, message):
+        name = message.name
+        if name == "moved":
+            ent = message.subject
+            if self.world.has_component(ent, Controllable):
+                cont = self.world.component_for_entity(Controllable)
+                if cont.player:
+                    pass
 
 
 # This processor is only responsible for updating position based on velocity, not for checking validity
-class VelocityProcessor(esper.Processor):
-    def __init__(self):
-        super().__init__()
-
-    def process(self, event, context):
+class VelocityProcessor(Processor):
+    def process(self, command):
         # Moves all entities with a velocity
         for ent, (pos, vel) in self.world.get_components(Positionable, Velocity):
             if vel.dx == 0 and vel.dy == 0:
@@ -68,15 +55,18 @@ class VelocityProcessor(esper.Processor):
 
 # For now this processor essentially parses actions and modifies components
 # but it should eventually create the most logical event based on the command and gamestate
-class CommandProcessor(esper.Processor):
+class CommandProcessor(Processor):
     def __init__(self):
         super().__init__()
+        self.player_turn = False
 
-    def process(self, event, context):
-        command = kwargs.get("command", {})
-        for entity, (_, controllable) in self.world.get_components(Active, Controllable):
+    def process(self, command):
+        self.player_turn = False
+
+        for entity, controllable in self.world.get_component(Controllable):
             move = command.get("move")
             if move and self.world.has_component(entity, Velocity):
+                self.player_turn = True
                 vel = self.world.component_for_entity(entity, Velocity)
                 if move.startswith("north"):
                     vel.dy -= 1
@@ -92,7 +82,7 @@ class CommandProcessor(esper.Processor):
         pass
 
 
-class TurnProcessor(esper.Processor):
+class TurnProcessor(Processor):
     def __init__(self, ticks_per_turn=100, tick_threshold=0, minimum_ticks=1):
         super().__init__()
         self.ticks_per_turn = ticks_per_turn
@@ -101,46 +91,8 @@ class TurnProcessor(esper.Processor):
         self.ticks = 0
         self.turn = 0
 
-    def process(self, kwargs):
-        active_entities = list(self.world.get_component(Active))
-        assert(len(active_entities) == 1)
-
-        active_component = active_entities[0][1]
-        time_passed = active_component.ticks
-        assert(isinstance(time_passed, int))
-        active_component.ticks = 0
+    def process(self, event):
+        pass
 
     def get_active(self):
-        entities = list(self.world.get_component(Ticking))
-        while True:
-            entities.sort(key=lambda x: x[1].energy, reverse=True)
-            highest_tick_component = entities[0][1]
-            highest_tick_number = highest_tick_component.energy
-            if highest_tick_number < self.tick_threshold:
-                self.tick(self.minimum_ticks)
-                continue
-            break
-        tied_entities = list(filter(lambda ent: ent[1].energy == highest_tick_number, entities))
-        tied_amount = len(tied_entities)
-        assert (tied_amount >= 1)
-        if tied_amount != 1:
-            # If we have more than one possible choice, we choose the one with the highest speed
-            tied_entities.sort(key=lambda x: x[1].speed, reverse=True)
-        self.reset_active()
-        active = tied_entities[0]
-        active_entity = active[0]
-        active_entity_component = active[1]
-        active_entity_component.active = True
-        return active_entity, active_entity_component
-
-    def reset_active(self):
-        for ent, active in self.world.get_component(Active):
-            self.world.remove_component(ent, active)
-
-    def tick(self, time_passed):
-        self.ticks += time_passed
-        self.turn = self.ticks / self.ticks_per_turn
-        for ent, tick in self.world.get_component(Ticking):
-            speed = tick.speed
-            new_ticks = time_passed * speed
-            tick.ticks += new_ticks
+        pass

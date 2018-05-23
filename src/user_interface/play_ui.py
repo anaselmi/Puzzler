@@ -1,6 +1,6 @@
 import tdl
 
-from src.logic.processors import MessageProcessor, RenderProcessor
+from src.logic.processors.processors import LoggingProcessor, RenderProcessor
 from src.user_interface.elements.map_element import MapElement
 from src.user_interface.elements.message_element import MessageElement
 
@@ -44,8 +44,7 @@ class PlayUI:
             window.clear()
 
     def _update_message_element(self, level):
-        message_processor = level.get_processor(MessageProcessor)
-        messages = message_processor.get_messages()
+        messages = level.send_logs()
         self.message_ui.update_messages(messages)
 
     def _update_map_element(self, level):
