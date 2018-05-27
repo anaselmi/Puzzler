@@ -2,7 +2,7 @@ import tdl
 
 from src.consts import *
 from src.input_handling import InputHandler, update_command
-from src.logic.level import Level
+from src.game.level import Level
 from src.state.state_stack import StateStack
 from src.state.states.play_state import PlayState
 from src.user_interface.play_ui import PlayUI
@@ -40,7 +40,6 @@ class Engine:
             self.state_stack.render(self.console)
             self.root.blit(self.console)
             tdl.flush()
-            self.state_stack.clear()
 
             # Input handling
             # TODO: Make this better

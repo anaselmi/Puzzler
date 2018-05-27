@@ -15,10 +15,6 @@ class StateABC(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def clear(self):
-        pass
-
-    @abc.abstractmethod
     def update(self):
         pass
 

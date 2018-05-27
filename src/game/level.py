@@ -1,12 +1,11 @@
 import random
-from collections import namedtuple
 
 from esper import World
-from src.logic.processors.processors import *
-from src.logic.event_manager import EventManager
-from src.logic.event import MessageEvent
+from src.game.processors.processors import *
+from src.game.event_manager import EventManager
+from src.game.event import MessageEvent
 from src.consts import *
-from src.logic.components import *
+from src.game.components import *
 
 
 class Level(World):
@@ -47,7 +46,8 @@ class Level(World):
                 self.delete_entity(entity, immediate=True)
             self._dead_entities.clear()
 
-    def create_logs(self):
+    @staticmethod
+    def create_logs():
         logs = list()
         logs.append("Welcome to Puzzler!")
         logs.append("There's not much to do as of right now.")

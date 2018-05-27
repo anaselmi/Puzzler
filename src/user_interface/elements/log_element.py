@@ -6,22 +6,19 @@ from src.user_interface.elements.element_abc import ElementABC
 
 class MessageElement(ElementABC):
     def __init__(self, console, size, destination):
+        name = "log"
         fg = D_GREY
         bg = BLACK
-        super().__init__(console, size, destination, fg, bg)
+        super().__init__(name, console, size, destination, fg, bg)
 
         self.frame_color = WHITE
         self.frame_char = "."
-        self.messages = []
 
-    def render(self):
-        self.draw()
-
-    def draw(self):
+    def draw_log(self, log):
         self._fill()
         self._draw_frame()
-        assert(len(self.messages) < self.height)
-        for i, message in enumerate(self.messages):
+        assert(len(log) < self.height)
+        for i, message in enumerate(log):
             text = message.text
             fg = message.color
             # Add 1 to i to make sure we don't render onto the frame
@@ -29,14 +26,6 @@ class MessageElement(ElementABC):
 
     def update(self):
         pass
-
-    def update_messages(self, messages):
-        self.messages = list(itertools.chain(self.messages, messages))
-        self._delete_old_messages()
-
-    def _delete_old_messages(self):
-        while len(self.messages) >= self.height - 1:
-            del self.messages[0]
 
     def _draw_frame(self):
         self.window.draw_frame(0, 0, None, None, "?", fg=M_GREY, bg=BLACK)

@@ -4,15 +4,13 @@ from src.user_interface.elements.element_abc import ElementABC
 
 class MapElement(ElementABC):
     def __init__(self, console, size, destination):
+        name = "map"
         fg = P_L_GREEN
         bg = BLACK
-        super().__init__(console, size, destination, fg, bg)
+        super().__init__(name, console, size, destination, fg, bg)
 
         self.default_char = "."
         self.tiles = None
-
-    def render(self):
-        self.draw()
 
     def draw(self):
         self._fill()

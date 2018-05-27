@@ -26,10 +26,6 @@ class StateStack:
         for state in reversed(self.stack):
             state.render(console)
 
-    def clear(self):
-        for state in reversed(self.stack):
-            state.clear()
-
     # Only the state at the top of the stack can receive input
     def handle(self, command):
         result = self.stack[-1].handle(command)

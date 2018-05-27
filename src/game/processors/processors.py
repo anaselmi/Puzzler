@@ -2,7 +2,7 @@ from esper import Processor
 from itertools import chain
 import esper
 
-from src.logic.components import *
+from src.game.components import *
 
 
 class RenderProcessor(Processor):

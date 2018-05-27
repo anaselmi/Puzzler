@@ -3,7 +3,8 @@ import tdl
 
 
 class ElementABC(abc.ABC):
-    def __init__(self, console, size, destination, fg, bg):
+    def __init__(self, name, console, size, destination, fg, bg):
+        self.name = name
         self.console = console
         width, height = size
         self.x, self.y = destination
@@ -14,12 +15,4 @@ class ElementABC(abc.ABC):
 
     @abc.abstractmethod
     def update(self):
-        pass
-
-    @abc.abstractmethod
-    def draw(self):
-        pass
-
-    @abc.abstractmethod
-    def render(self):
         pass
