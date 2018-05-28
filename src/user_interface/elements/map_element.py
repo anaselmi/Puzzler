@@ -1,40 +1,31 @@
 from src.consts import *
-from src.user_interface.elements.element_abc import ElementABC
+from src.user_interface.elements.element import Element
 
 
-class MapElement(ElementABC):
-    def __init__(self, console, size, destination):
-        name = "map"
-        fg = P_L_GREEN
-        bg = BLACK
-        super().__init__(name, console, size, destination, fg, bg)
+class MapElement(Element):
+    name = "map"
 
-        self.default_char = "."
-        self.tiles = None
+    def __init__(self, con, pos, size):
+        name = MapElement.name
+        super().__init__(name, con, size, pos)
+        self.create_frame()
 
-    def draw(self):
-        self._fill()
-        for unadjusted_y, row in enumerate(self.tiles):
-            for unadjusted_x, tile in enumerate(row):
-                x = unadjusted_x
-                y = unadjusted_y
-                fg = tile.get("fg", ...)
-                bg = tile.get("bg", ...)
-                char = tile.get("char", self.default_char)
-                self.window.draw_char(x, y, char=char, fg=fg, bg=bg)
-
-    def handle(self, command):
+    # Batch draw calls after camera movement, loading level, etc.
+    def draw_tiles(self, tiles):
         pass
 
-    def update(self):
+    # A tile contains a position, and a base color
+    def draw_tile(self, tile):
         pass
 
-    def update_tiles(self, tiles):
-        self.tiles = tiles
+    def draw_char(self, char, pos, color, tile=None, light=None, old_pos=None):
+        pass
 
-    def _fill(self):
-        self.window.draw_rect(0, 0, None, None, None)
+    def _draw_char(self, char, pos, color):
+        pass
 
-    def clear(self):
-        self.tiles = None
-        self.window.clear(fg=self.fg, bg=self.bg)
+    def clear_char(self, pos):
+        pass
+
+    def draw_lights(self, lights):
+        pass

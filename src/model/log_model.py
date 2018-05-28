@@ -1,34 +1,34 @@
-from src.model.model_abc import ModelABC
+from src.model.model import Model
 
 
-class LogModel(ModelABC):
-    def __init__(self, element):
+class LogModel(Model):
+    def __init__(self):
         super().__init__()
         self.logs = []
 
-        self.elem = element
-        self.max_logs = self.elem.height - 1
-
-    def render(self):
+    def render(self, element):
         if self.rerender:
-            self.elem.clear()
-            self.elem.draw_log(self.logs)
+            element.clear()
+            element.draw_logs(self.logs)
         self.rerender = False
 
-    def handle(self, command, level):
-        pass
-
-    def update(self, level):
+    def handle(self, command, element, level):
         new_logs = level.send_logs()
         if not new_logs:
             return
-        self.update_log(new_logs)
+        self.update_log(new_logs, element.max_logs)
         self.rerender = True
 
-    def update_log(self, logs):
-        self.logs += logs
-        self._delete_old_logs()
+    def update(self, element, level):
+        pass
 
-    def _delete_old_logs(self):
-        while len(self.logs) >= self.max_logs:
+    def update_log(self, new_logs, max_logs):
+        self.logs += new_logs
+        self._delete_extra_logs(max_logs)
+
+    def clear_logs(self):
+        self.logs = []
+
+    def _delete_extra_logs(self, max_logs):
+        while len(self.logs) >= max_logs:
             del self.logs[0]

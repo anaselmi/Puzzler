@@ -1,7 +1,7 @@
 import tdl
 
 from src.consts import *
-from src.input_handling import InputHandler, update_command
+from src.input_handling import InputHandler
 from src.game.level import Level
 from src.state.state_stack import StateStack
 from src.state.states.play_state import PlayState
@@ -37,9 +37,11 @@ class Engine:
         running = True
         while running and not tdl.event.is_window_closed():
             # Updating and drawing to screen
-            self.state_stack.render(self.console)
+            self.state_stack.render(self.root)
             self.root.blit(self.console)
             tdl.flush()
+            self.root.clear()
+            self.console.clear()
 
             # Input handling
             # TODO: Make this better

@@ -1,10 +1,10 @@
-from src.input_handling import update_command
+from input_handling import update_command
 
 
 class StateStack:
 
-    # Should we treat the world as a special case?
-    def __init__(self):
+    def __init__(self, screen_size):
+        self.screen_size = self.screen_width, self.screen_height = screen_size
         self.stack = []
 
     def push(self, state):

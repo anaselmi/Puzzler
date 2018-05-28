@@ -1,15 +1,17 @@
-from src.input_handling import update_command
-from src.state.states.state_abc import StateABC
-from src.model.log_model import LogModel
+from input_handling import update_command
+from state.states.state import State
+from model.log_model import LogModel
 
 
-class PlayState(StateABC):
-    def __init__(self, ui, level):
+class PlayState(State):
+    def __init__(self, stack, ui, level):
+        super().__init__(stack)
         self.ui = ui
         self.level = level
         self.models = self._create_models(ui)
 
-    def enter(self):
+    def enter(self, level):
+        self.level = level
         self.ui.handle(command={}, level=self.level)
 
     def exit(self):
@@ -33,8 +35,5 @@ class PlayState(StateABC):
 
     def _create_models(self, ui):
         models = []
-        log_elem = ui.log_element
-        log_model = LogModel(log_elem)
-        models.append(log_model)
 
         return models
