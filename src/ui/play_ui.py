@@ -1,8 +1,8 @@
 import tdl
 
 from game.processors.processors import RenderProcessor
-from user_interface.elements.map_element import MapElement
-from user_interface.elements.log_element import MessageElement
+from ui.elements.map_element import MapElement
+from ui.elements.log_element import MessageElement
 
 
 # TODO: Rename ui windows to elements

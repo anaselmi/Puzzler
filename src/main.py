@@ -5,7 +5,7 @@ from src.input_handling import InputHandler
 from src.game.level import Level
 from src.state.state_stack import StateStack
 from src.state.states.play_state import PlayState
-from src.user_interface.play_ui import PlayUI
+from src.ui.play_ui import PlayUI
 
 
 class Engine:

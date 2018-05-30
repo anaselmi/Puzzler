@@ -1,5 +1,5 @@
 from src.consts import *
-from src.user_interface.elements.element import Element
+from src.ui.elements.element import Element
 
 
 class MapElement(Element):
@@ -8,7 +8,6 @@ class MapElement(Element):
     def __init__(self, con, pos, size):
         name = MapElement.name
         super().__init__(name, con, size, pos)
-        self.create_frame()
 
     # Batch draw calls after camera movement, loading level, etc.
     def draw_tiles(self, tiles):
