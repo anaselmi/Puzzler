@@ -1,19 +1,21 @@
 class State:
-    def __init__(self, stack, screen_size):
+    def __init__(self, stack):
         self.stack = stack
-        self.active = False
 
-    def enter(self, level):
+    def enter(self, screen):
         pass
 
     def exit(self):
         pass
 
-    def render(self, console):
-        pass
-
-    def update(self):
+    def start(self):
         pass
 
     def handle(self, command):
+        pass
+
+    def update(self, dx):
+        pass
+
+    def render(self, screen):
         pass

@@ -1,8 +1,8 @@
 import tdl
 
-from game.processors.processors import RenderProcessor
+from logic.processors.processors import RenderProcessor
 from ui.elements.map_element import MapElement
-from ui.elements.log_element import MessageElement
+from ui.elements.log_element import LogElement
 
 
 # TODO: Rename ui windows to elements
@@ -17,7 +17,7 @@ class PlayUI:
         self._create_log_element(size=(None, None), destination=(0, map_element_height))
 
     def _create_log_element(self, size, destination):
-        self.log_element = MessageElement(self.console, size=size, pos=destination)
+        self.log_element = LogElement(self.console, size=size, pos=destination)
         self.elements.append(self.log_element)
 
     def _create_map_element(self, size, destination):

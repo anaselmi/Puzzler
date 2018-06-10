@@ -1,15 +1,15 @@
-from input_handling import update_command
+from commands import update_command
 
 
 class StateStack:
 
-    def __init__(self, screen_size):
-        self.screen_size = self.screen_width, self.screen_height = screen_size
+    def __init__(self, screen):
+        self.screen = screen
         self.stack = []
 
     def push(self, state):
         self.stack.append(state)
-        state.enter()
+        state.enter(self.screen)
         return state
 
     def pop(self):
@@ -22,17 +22,20 @@ class StateStack:
         self.states = []
         return old_states
 
-    def render(self, console):
+    def start(self):
         for state in reversed(self.stack):
-            state.render(console)
+            state.start()
 
-    # Only the state at the top of the stack can receive input
+    def render(self):
+        for state in reversed(self.stack):
+            state.render(self.screen)
+
+    # Only the state at the top of the stack can handle input
     def handle(self, command):
         result = self.stack[-1].handle(command)
         command = update_command(command, result)
         return command
 
-    def update(self):
+    def update(self, dx):
         for state in reversed(self.stack):
-            state.update()
-
+            state.update(dx)

@@ -1,11 +1,11 @@
 import random
 
 from esper import World
-from src.game.processors.processors import *
-from src.game.event_manager import EventManager
-from src.game.event import MessageEvent
+from src.logic.processors.processors import *
+from src.logic.event_manager import EventManager
+from src.logic.event import MessageEvent
 from src.consts import *
-from src.game.components import *
+from src.logic.components import *
 
 
 class Level(World):
@@ -36,7 +36,7 @@ class Level(World):
         except IndexError:
             text = logs[-1]
 
-        log = MessageEvent(text, random.choice([WHITE, P_L_GREEN]))
+        log = MessageEvent(text, random.choice([WHITE, L_GREEN]))
 
         return [log]
 

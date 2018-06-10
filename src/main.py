@@ -1,63 +1,55 @@
+import time
+
 import tdl
 
 from src.consts import *
-from src.input_handling import InputHandler
-from src.game.level import Level
+from src.commands import handle
+from src.logic.level import Level
 from src.state.state_stack import StateStack
 from src.state.states.play_state import PlayState
-from src.ui.play_ui import PlayUI
 
 
 class Engine:
-    def __init__(self, size=SCREEN_SIZE, font=FONT_PATH, title=GAME_TITLE):
+    def __init__(self, size=SIZE):
         self.width, self.height = self.size = size
-        self.font = font
-        self.title = title
-        tdl.set_font(font, greyscale=True, altLayout=True)
-        self.root = tdl.init(self.width, self.height, title=self.title, fullscreen=True)
-        self.console = tdl.Console(self.width, self.height)
-        self.state_stack = StateStack()
+        self.font = FONT_PATH
+        self.title = TITLE
+        tdl.set_font(self.font, greyscale=GREYSCALE, altLayout=ALT_LAYOUT)
+        self.root = tdl.init(self.width, self.height, title=self.title, fullscreen=FULLSCREEN)
+        self.screen = tdl.Console(self.width, self.height)
+        self.state_stack = StateStack(self.screen)
 
-    def create_all(self):
-        self.create_play_state(self.size)
-
-    def create_play_state(self, ui_size=None, level_size=None):
-        ui_size = self.size if ui_size is None else ui_size
+    def create_play_state(self, level_size=None):
         level_size = self.size if level_size is None else level_size
-
-        play_ui = PlayUI(ui_size)
         level = Level(level_size)
         level.create_processors()
         level.create_player()
-
-        play_state = PlayState(ui=play_ui, level=level)
+        play_state = PlayState(self.state_stack, level)
         self.state_stack.push(play_state)
 
     def loop(self):
+        time_previous = time.time()
         running = True
         while running and not tdl.event.is_window_closed():
-            # Updating and drawing to screen
-            self.state_stack.render(self.root)
-            self.root.blit(self.console)
-            tdl.flush()
-            self.root.clear()
-            self.console.clear()
+            time_current = time.time()
+            time_elapsed = time_current - time_previous
 
             # Input handling
-            # TODO: Make this better
-            _inputs = list(tdl.event.get())
-            for _input in _inputs:
-                command = InputHandler.handle(_input)
-                break
-            else:
-                command = {}
+            for _input in tdl.event.get():
+                command = handle(_input)
+                # Feeds command to state stack and checks to see if game should be exited
+                if self.state_stack.handle(command).get(C_K_EXIT):
+                    running = False
 
-            command = self.state_stack.handle(command)
-            _exit = command.get("exit")
-            if _exit:
-                running = False
+            # Updating the screen
+            self.state_stack.update(time_elapsed)
 
-            self.state_stack.update()
+            # Drawing to screen
+            self.state_stack.render()
+            self.root.blit(self.screen)
+            tdl.flush()
+            self.root.clear()
+            self.screen.clear()
 
 
 if __name__ == "__main__":
