@@ -65,12 +65,12 @@ class Element:
         self.height = self.c_height - (self.f_height * 2)
         self.size = self.width, self.height
 
-    def clear(self):
-        """Clears the element. Does not clear the frame.
+    def render(self, screen):
+        screen.blit(self.c, *self.c_pos)
 
-        :return: None
-        """
-        self.c.draw_rect(self.f_width, self.f_height, self.width, self.height, None)
+    def clear(self):
+        self.c.clear()
+        self._draw_frame(self.f_size, self.f_char, self.f_plt)
 
     def _draw_frame(self, size, char, plt):
         width, height = size

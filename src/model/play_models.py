@@ -6,21 +6,21 @@ class LogModel(Model):
         super().__init__()
         self.logs = []
 
-    def render(self, element):
-        if self.rerender:
-            element.clear()
-            element.draw_logs(self.logs)
-        self.rerender = False
+    def render(self, element, screen):
+        element.render(screen)
 
     def handle(self, command, element, level):
         new_logs = level.send_logs()
         if not new_logs:
             return
-        self.update_log(new_logs, element.max_logs)
+        self.update_log(new_logs, element.height)
         self.rerender = True
 
-    def update(self, element, level):
-        pass
+    def update(self, dx, element, level):
+        if self.rerender:
+            element.clear()
+            element.draw_logs(self.logs)
+        self.rerender = False
 
     def update_log(self, new_logs, max_logs):
         self.logs += new_logs
@@ -34,7 +34,7 @@ class LogModel(Model):
             del self.logs[0]
 
 
-class MapModel(Model):
+class TileModel(Model):
     def __init__(self):
         super().__init__()
         self.tiles = []

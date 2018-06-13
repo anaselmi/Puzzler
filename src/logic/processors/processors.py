@@ -72,7 +72,6 @@ class CommandProcessor(Processor):
                     vel.dy -= 1
                 elif move.startswith("south"):
                     vel.dy += 1
-
                 if move.endswith("east"):
                     vel.dx += 1
                 elif move.endswith("west"):

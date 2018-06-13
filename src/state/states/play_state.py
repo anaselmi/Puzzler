@@ -1,9 +1,9 @@
 from commands import update_command
 from state.states.state import State
 from model.play_models import LogModel
-from model.play_models import MapModel
-from ui.elements.element import MapElement
-from ui.elements.element import LogElement
+from model.play_models import TileModel
+from ui.elements.play_elements import TileElement
+from ui.elements.play_elements import LogElement
 
 
 class PlayState(State):
@@ -12,29 +12,32 @@ class PlayState(State):
         self.level = level
 
     def enter(self, screen):
-        self._create_models(screen)
+        self._create_elements(screen)
+        self._create_models()
 
     def exit(self):
         pass
 
-    def render(self, console):
-        self.map_model
+    def start(self):
+        pass
+
+    def render(self, screen):
+        self.tile_mod.render(self.tile_elem, screen)
+        self.log_mod.render(self.log_elem, screen)
 
     def handle(self, command):
-        result = self.log_model.handle(command=command, level=self.level)
+        result = self.log_mod.handle(command=command, level=self.level, element=self.log_elem)
         command = update_command(command, result)
-        paused = command.get("paused")
-        if not paused:
-            self.level.handle(command)
+        self.level.handle(command)
 
     def update(self, dx):
         pass
 
     def _create_elements(self, screen):
         sc_size = screen.width, screen.height
-        self.map_elem = MapElement(pos=(0, 0), sc_size=sc_size)
-        self.log_elem = LogElement(pos=(0, self.map_elem.c_height), sc_size=sc_size)
+        self.tile_elem = TileElement(pos=(0, 0), sc_size=sc_size)
+        self.log_elem = LogElement(pos=(0, self.tile_elem.c_height), sc_size=sc_size)
 
     def _create_models(self):
-        self.map_elem = MapModel()
+        self.tile_mod = TileModel()
         self.log_mod = LogModel()
