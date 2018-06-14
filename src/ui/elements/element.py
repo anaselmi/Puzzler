@@ -1,88 +1,109 @@
+import abc
 import tdl
 
 from consts import *
 
 
-class Element:
+class Frame:
+    def __init__(self, size=(0, 0), string="", plt=(..., ...)):
+        self.size = self.width, self.height = size
+        self.string = string
+        self.plt = self.fg, self.bg = plt
+        if self.width == 0 or self.height == 0:
+            self.width = 0
+            self.height = 0
+            self.string = ""
+            self.plt = (..., ...)
+
+DEFAULT_FRAME = Frame(size=(1, 1), string=FRAME_STRING, plt=PLT_F)
+
+
+class Element(abc.ABC):
     """Base class for UI elements.
 
-    Creates and adds framing functionality to a TDL console. Exposes methods that users can
-    use in predefined ways they determine from the name of the element."
+    Wraps functionality around a TDL console, and adds attributes. Exposes methods that can
+    be used by user code as determined by the name of the Element. Adds framing functionality"
 
     Notes:
-        Do not draw onto the console outside of methods provided by class and subclasses.
+        User code should not draw to con/win unless using a method exposed by a subclass of Element.
 
     Attributes:
         name (string): Used by outside code to determine specialized methods/attributes.
         size: Contains width and height of the element.
-        c: The TDL console the element draws onto.
-        c_pos: Contains c_x and c_y. Position relative to the screen.
-        c_size: Contains c_width and c_height.
-        c_width (int): Width of the console.
-        c_height (int): Height of the console.
+        con: The TDL console the element contains.
+        win: The window of the console the element draws onto.
         plt: Foreground/Background colors of the element.
-        f_size: Contains f_w and f_h. Width and height of the frame
-        f_char (string): Character used to draw the frame.
-        f_plt: Fore/Background of the frame.
+        frame: Frame used to frame the element.
+
     """
-    def __init__(self, name, pos, size, sc_size, plt=PLT_WB, f_size=FRAME_SIZE, f_char=FRAME_CHAR, f_plt=(..., ...)):
+    def __init__(self, name, pos, size, plt=PLT_WB, frame=None):
         """Initializes element and optional frame.
 
         :param string name: Sets name for element.
-        :param tuple pos: Sets default blit coordinates for console (takes frame into account).
-        :param tuple size: Size of the base console. A value of -1 causes that dimension to fill the screen.
-        :param tuple sc_size: Size of the screen.
-        :param tuple plt: Palette used by element.
-        :param tuple f_size: Size of the frame.
-        :param tuple f_char: Character used to frame element.
-        :param tuple f_plt: Palette used by frame.
+        :param tuple pos: Sets default blit coordinates for console.
+        :param tuple size: Size of the base console.
+        :param tuple plt: Optional. Palette used by element.
+        :param tuple frame: Optional. The framing surrounding the element.
         """
-        super().__init__()
         self.name = name
-        self.c_pos = self.c_x, self.c_y = pos
-        self._init_console(size, sc_size, plt)
-        self._init_frame(f_size, f_char, f_plt)
-
-    def _init_console(self, size, screen_size, plt):
-        width, height = size
-        screen_width, screen_height = screen_size
-        self.c_width = screen_width if width == -1 else width
-        self.c_height = screen_height if height == -1 else height
-        self.c_size = self.c_width, self.c_height
-        self.c = tdl.Console(self.c_width, self.c_height)
         self.plt = self.fg, self.bg = plt
-        self.c.set_colors(fg=self.fg, bg=self.bg)
+        self.updated = False
+        self.rendered = False
+        # Console.
+        width, height = size
+        self.con = tdl.Console(width, height)
+        # Pos should be an attribute of the console, but Pycharm doesn't like it when I do that.
+        self.pos = self.x, self.y = pos
+        self.con.size = self.con.width, self.con.height
+        self.con.set_colors(fg=self.fg, bg=self.bg)
+        # Frame.
+        if frame is None:
+            frame = Frame()
+        self.frame = frame
+        self._draw_frame()
+        # Window.
+        width = self.con.width - (self.frame.width * 2)
+        height = self.con.height - (self.frame.height * 2)
+        self.win = tdl.Window(self.con, width=width, height=height, x=self.frame.width, y=self.frame.height)
+        self.win.pos = self.win.x, self.win.y
+        self.win.size = self.win.width, self.win.height
 
-    def _init_frame(self, size, char, plt):
-        self.f_size = self.f_width, self.f_height = size
-        self.f_char = char
-        self.f_plt = self.f_fg, self.f_bg = plt
-        if self.f_width == 0 or self.f_height == 0:
-            self._draw_frame((0, 0), "", (..., ...))
-        else:
-            self._draw_frame(self.f_size, self.f_char, self.f_plt)
-        self.width = self.c_width - (self.f_width * 2)
-        self.height = self.c_height - (self.f_height * 2)
-        self.size = self.width, self.height
+    def _draw_frame(self, frame=None):
+        if frame is None:
+            assert(hasattr(self, "frame"))
+            frame = self.frame
+        self.con.clear()
+        self.con.draw_frame(x=0, y=0,
+                            width=frame.width, height=frame.height,
+                            string=frame.string, fg=frame.fg, bg=frame.bg)
 
     def render(self, screen):
-        screen.blit(self.c, *self.c_pos)
+        """ Given a screen to draw onto, the element blits itself at con.pos if it hasn't been rendered yet.
+
+        :param screen:
+        :return: None
+        """
+        if self.rendered:
+            return
+        x, y = self.pos
+        screen.blit(self.con, x=x, y=y)
+        self.rendered = True
+
+    def reset(self):
+        self.updated = False
+        self.rendered = False
 
     def clear(self):
-        self.c.clear()
-        self._draw_frame(self.f_size, self.f_char, self.f_plt)
+        """ Clears the contents of the element without clearing the frame.
 
-    def _draw_frame(self, size, char, plt):
-        width, height = size
-        fg, bg = plt
-        self.c.draw_rect(0, 0,
-                         width=width, height=height,
-                         string=char, fg=fg, bg=bg)
+        :return: None
+        """
+        self.win.clear()
+        self.updated = False
+        self.rendered = False
 
     def _adjust(self, pos):
-        x, y = pos
-        adjusted = x + self.f_width, y + self.f_height
-        return adjusted
+        return pos[0] + self.frame.width, pos[1] + self.frame.height
 
     def in_elem(self, pos):
         """ Checks if a position is within the drawable portion of the screen.
@@ -91,8 +112,8 @@ class Element:
         :return bool: Whether the position is in the usable part of the element or not.
         """
         x, y = pos
-        if not (x >= 0 + self.f_width) or not (x < self.width - self.f_width):
+        if not (x >= 0 + self.frame.width) or not (x < self.con.width - self.frame.width):
             return False
-        if not (y >= 0 + self.f_height) or not (y < self.height - self.f_height):
+        if not (y >= 0 + self.frame.height) or not (y < self.con.height - self.frame.height):
             return False
         return True

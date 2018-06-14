@@ -1,20 +1,21 @@
 from src.consts import *
-from src.ui.elements.element import Element
+import src.ui.elements.element as el
 
 
-class LogElement(Element):
+class LogElement(el.Element):
     name = LOG
-    plt = (D_GREY, BLACK)
+    plt = D_GREY, BLACK
 
-    def __init__(self, pos, size=LOG_SIZE, sc_size=SIZE):
+    def __init__(self, pos, size=LOG_SIZE):
         name = LogElement.name
         plt = LogElement.plt
-        super().__init__(name, pos, size, sc_size, plt=plt)
+        frame = el.DEFAULT_FRAME
+        super().__init__(name=name, pos=pos, size=size, plt=plt, frame=frame)
 
     def draw_logs(self, logs):
         x = 0
         self.clear()
-        assert(len(logs) < self.height)
+        assert(len(logs) < self.win.height)
         for y, log in enumerate(logs):
             self.draw_log(log, x, y)
 
@@ -26,18 +27,22 @@ class LogElement(Element):
         # self.c.draw_str(x + self.f_w, y + self.f_h, text, color)
 
 
-class TileElement(Element):
+class TileElement(el.Element):
+    # A tile should contain a position, and a base color.
+
     name = TILE
+    plt = PLT_WB
 
-    def __init__(self, pos, size=TILE_SIZE, sc_size=SIZE):
+    def __init__(self, pos, size=TILE_SIZE):
         name = TileElement.name
-        super().__init__(name, pos, size, sc_size)
+        plt = TileElement.plt
+        frame = el.DEFAULT_FRAME
+        super().__init__(name=name, pos=pos, size=size, plt=plt, frame=frame)
 
-    # Batch draw calls after camera movement, loading level, etc.
+    # Draw all tiles. Useful after moving the camera, loading the level, etc.
     def draw_tiles(self, tiles):
         pass
 
-    # A tile contains a position, and a base color.
     def draw_tile(self, tile):
         pass
 

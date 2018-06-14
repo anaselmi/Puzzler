@@ -1,19 +1,21 @@
 import random
 
-from esper import World
-from src.logic.processors.processors import *
-from src.logic.event_manager import EventManager
-from src.logic.event import MessageEvent
-from src.consts import *
-from src.logic.components import *
+import esper as es
+from consts import *
+from commands import update_command_dec
+from logic.processors.processors import *
+from logic.event_manager import EventManager
+from logic.event import MessageEvent
 
 
-class Level(World):
+class Level(es.World):
     def __init__(self, size):
         super().__init__()
         self.width, self.height = self.size = size
         self.message_board = EventManager(self)
         self.i = 0
+        self.create_processors()
+        self.create_player()
 
     def process(self, command):
         self.clear_dead_entities()
@@ -21,9 +23,9 @@ class Level(World):
             processor.process(command)
         return command
 
-    def handle(self, command):
-        command = self.process(command)
-        return command
+    @update_command_dec
+    def handle(self, command=None):
+        self.process(command)
 
     def send_logs(self):
         control = self.get_processor(CommandProcessor)

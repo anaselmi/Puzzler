@@ -1,22 +1,28 @@
+from consts import *
+from commands import update_command_dec
 from model.model import Model
 
 
 class LogModel(Model):
+    name = LOG
+
     def __init__(self):
-        super().__init__()
+        name = LogModel.name
+        super().__init__(name)
         self.logs = []
 
-    def render(self, element, screen):
-        element.render(screen)
+    def clear(self, element, level):
+        pass
 
-    def handle(self, command, element, level):
+    @update_command_dec
+    def handle(self, element, level, command=None):
         new_logs = level.send_logs()
         if not new_logs:
             return
         self.update_log(new_logs, element.height)
         self.rerender = True
 
-    def update(self, dx, element, level):
+    def update(self, element, level):
         if self.rerender:
             element.clear()
             element.draw_logs(self.logs)
@@ -35,8 +41,11 @@ class LogModel(Model):
 
 
 class TileModel(Model):
+    name = TILE
+
     def __init__(self):
-        super().__init__()
+        name = TileModel.name
+        super().__init__(name)
         self.tiles = []
         self.ents = []
         self.effects = []

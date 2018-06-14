@@ -1,12 +1,13 @@
+from commands import update_command
+
+
 class Model:
-    def __init__(self):
+    def __init__(self, name):
+        self.name = name
         self.rerender = True
 
-    def render(self, element, screen):
+    def handle(self, element, data, command=None):
         pass
 
-    def handle(self, command, element, data):
-        pass
-
-    def update(self, dx, element, data):
+    def update(self, element, data):
         pass
