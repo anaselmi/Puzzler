@@ -1,7 +1,5 @@
 from esper import Processor
-from itertools import chain
-import esper
-
+import src.commands as com
 from src.logic.components import *
 
 
@@ -47,38 +45,42 @@ class VelocityProcessor(Processor):
         for ent, (pos, vel) in self.world.get_components(Positionable, Velocity):
             if vel.dx == 0 and vel.dy == 0:
                 continue
+            pos_old = pos.x, pos.y
             pos.x += vel.dx
             pos.y += vel.dy
+            pos_new = pos.x, pos.y
             vel.dx = 0
             vel.dy = 0
+            if pos_old != pos_new:
+                # pass
+                print(f"Controllable entity moved from {pos_old} to {pos_new}.")
 
 
-# For now this processor essentially parses actions and modifies components
-# but it should eventually create the most logical event based on the command and gamestate
 class CommandProcessor(Processor):
     def __init__(self):
         super().__init__()
-        self.player_turn = False
+        self.is_player_turn = False
 
+    # TODO: Process should take who's turn it is into account.
     def process(self, command):
-        self.player_turn = False
-
+        self.is_player_turn = False
         for entity, controllable in self.world.get_component(Controllable):
-            move = command.get("move")
-            if move and self.world.has_component(entity, Velocity):
-                self.player_turn = True
-                vel = self.world.component_for_entity(entity, Velocity)
-                if move.startswith("north"):
-                    vel.dy -= 1
-                elif move.startswith("south"):
-                    vel.dy += 1
-                if move.endswith("east"):
-                    vel.dx += 1
-                elif move.endswith("west"):
-                    vel.dx -= 1
+            data = entity, command
+            if self._move(*data):
+                break
+        # Code takes this branch if we don't break from the loop, meaning no action has been taken.
+        else:
+            return
+        self.is_player_turn = True
 
-    def _move(self, entity, direction):
-        pass
+    def _move(self, entity, command):
+        move = command.get(com.KEY_MOVE)
+        if move is None:
+            return False
+        vel = self.world.component_for_entity(entity, Velocity)
+        vel.dx += move[0]
+        vel.dy += move[1]
+        return True
 
 
 class TurnProcessor(Processor):

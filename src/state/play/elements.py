@@ -1,5 +1,5 @@
+import elements.element as el
 from src.consts import *
-import src.ui.elements.element as el
 
 
 class LogElement(el.Element):
@@ -11,11 +11,12 @@ class LogElement(el.Element):
         plt = LogElement.plt
         frame = el.DEFAULT_FRAME
         super().__init__(name=name, pos=pos, size=size, plt=plt, frame=frame)
+        self.max_logs = self.win.height
 
     def draw_logs(self, logs):
         x = 0
         self.clear()
-        assert(len(logs) < self.win.height)
+        assert(len(logs) < self.max_logs)
         for y, log in enumerate(logs):
             self.draw_log(log, x, y)
 

@@ -1,80 +1,38 @@
-import random
+import logging
+from esper import World
 
-import esper as es
+from logic.processors import *
 from consts import *
-from commands import update_command_dec
-from logic.processors.processors import *
+from commands import update_result
+from logging_tools import init_sized_object
 from logic.event_manager import EventManager
-from logic.event import MessageEvent
+
+logger = logging.getLogger(__name__)
 
 
-class Level(es.World):
+class Level:
     def __init__(self, size):
         super().__init__()
         self.width, self.height = self.size = size
-        self.message_board = EventManager(self)
-        self.i = 0
-        self.create_processors()
+        init_sized_object("level", self.size, logger)
+        self._world = World()
+        logger.debug("New world created.")
+        self.events = EventManager(self)
+        self.add_processors()
         self.create_player()
 
-    def process(self, command):
-        self.clear_dead_entities()
-        for processor in self._processors:
-            processor.process(command)
-        return command
+    @update_result
+    def handle(self, command):
+        pass
 
-    @update_command_dec
-    def handle(self, command=None):
-        self.process(command)
+    def update(self, command):
+        self._world.process(command)
 
+    # TODO
     def send_logs(self):
-        control = self.get_processor(CommandProcessor)
-        logs = self.create_logs()
-        if not control.player_turn:
-            return []
-        try:
-            text = logs[self.i]
-            self.i += 1
-        except IndexError:
-            text = logs[-1]
+        return [f"This is a test. You need to finish{self.send_logs.__name__}."]
 
-        log = MessageEvent(text, random.choice([WHITE, L_GREEN]))
-
-        return [log]
-
-    def clear_dead_entities(self):
-        if self._dead_entities:
-            for entity in self._dead_entities:
-                self.delete_entity(entity, immediate=True)
-            self._dead_entities.clear()
-
-    @staticmethod
-    def create_logs():
-        logs = list()
-        logs.append("Welcome to Puzzler!")
-        logs.append("There's not much to do as of right now.")
-        logs.append("But you can take some and explore this world.")
-        logs.append("There's nothing interesting to uncover.")
-        logs.append("Nothing to do.")
-        logs.append("No one here but you.")
-        logs.append("And me, I guess.")
-        logs.append("Pretty sure the game might crash at any moment.")
-        logs.append("If it does, be sure to tell me what caused it.")
-        logs.append("But considering only eight buttons work right now.")
-        logs.append("You probably walked off the screen.")
-        logs.append("There was a scrolling camera in the game, for a very brief period")
-        logs.append("It was bug ridden, so I just deleted it.")
-        logs.append("Who knows, maybe you're having fun.")
-        logs.append("Modern living tends to get busy.")
-        logs.append("Isn't it nice to find a place where you can't do anything.")
-        logs.append("You can just sit back, and relax.")
-        logs.append("While I keep myself busy with wrangling this project in.")
-        logs.append("If you're playing this, you have access to this code.")
-        logs.append("If you have any tips, pointers, or suggestions.")
-        logs.append("Please contact me at elmi.anas@gmail.com")
-        return logs
-
-    def create_processors(self):
+    def add_processors(self):
         processors = []
 
         message_processor = LoggingProcessor()
@@ -89,8 +47,10 @@ class Level(es.World):
         processors.append(turn_processor)
 
         for i, processor in enumerate(processors):
-            self.add_processor(processor, priority=i)
+            self._world.add_processor(processor, priority=i)
+        print(f"{len(processors)} processor(s) added to the world.")
 
+    # TODO: Move this outside of level.
     def create_player(self):
         components = []
 
@@ -111,6 +71,6 @@ class Level(es.World):
         player_act = Active()
         components.append(player_act)
 
-        player = self.create_entity()
+        player = self._world.create_entity()
         for component in components:
-            self.add_component(player, component)
+            self._world.add_component(player, component)

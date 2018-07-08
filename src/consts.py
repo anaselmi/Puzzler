@@ -1,4 +1,7 @@
-# Colors & Pallets
+from enum import Enum
+
+
+# COLORS & PALLETS
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 D_GREY = (200, 200, 200)
@@ -18,13 +21,10 @@ PLT_WB = WHITE, BLACK
 PLT_F = M_GREY, BLACK
 
 
-# Screen Parameters
+# SCREEN/UI PARAMETERS
 FPS = 60
-# Milliseconds per frame.
-MS_PER_FRAME = 1000 / 60
+MS_PER_FRAME = 1000 / 60  # Milliseconds per frame.
 FULLSCREEN = False
-GREYSCALE = True
-ALT_LAYOUT = True
 
 W = 113
 H = 40
@@ -52,24 +52,9 @@ FRAME_W = FRAME_H = 1
 FRAME_SIZE = FRAME_W, FRAME_H
 FRAME_STRING = "?"
 
+# FONT
+FONT_12x12 = "12x12"
 
-# Misc
+# MISC
 TITLE = "Puzzler: The Roguelike"
-FONT_PATH = "assets\\courier12x12.png"
-FONT_SIZE = 12
 START_MESSAGE = ["Welcome to Puzzler!"]
-
-# Commands
-C_K_MOVE = "move"
-C_MOVE = {C_K_MOVE: None}
-C_K_ENTER = "enter"
-C_ENTER = {C_K_ENTER: True}
-C_K_EXIT = "enter"
-C_EXIT = {C_K_EXIT: True}
-C_K_RETURN = "return"
-C_RETURN = {C_K_RETURN: True}
-C_K_LOOK = "look"
-C_LOOK = {C_K_LOOK: True}
-C_K_CONSUMED = "consumed"
-C_CONSUMED = {C_K_CONSUMED: True}
-
